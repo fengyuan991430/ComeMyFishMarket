@@ -14,5 +14,6 @@ namespace ComeMyFishMarket.Models
         public DateTime OrderDate { get; set; }
         public string UserID { get; set; }
         //command
+        public DateTime OrderDate_TEST { get; set; }
     }
 }
