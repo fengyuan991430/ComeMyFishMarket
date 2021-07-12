@@ -13,6 +13,5 @@ namespace ComeMyFishMarket.Models
         public DateTime PaymentDate { get; set; }
         public string CustomerID { get; set; }
         public string ReceivedBy { get; set; }
-        public string Test { get; set; }
     }
 }
