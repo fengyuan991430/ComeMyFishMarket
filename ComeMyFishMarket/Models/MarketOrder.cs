@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace ComeMyFishMarket.Models
 {
-    public class Order
+    public class MarketOrder
     {
-        public int OrderID { get; set; }
+        public int MarketOrderID { get; set; }
         public string OrderDescription { get; set; }
         public double TotalAmount { get; set; }
         public string OrderStatus { get; set; }
