@@ -11,7 +11,8 @@ namespace ComeMyFishMarket.Models
         public string ItemName { get; set; }
         public int ItemQuantity { get; set; }
         public double TotalPrice { get; set; }
-        public string OrderID { get; set; }
+        public int ItemID { get; set; }
         public string UserID { get; set; }
+        public int OrderID { get; set; }
     }
 }
