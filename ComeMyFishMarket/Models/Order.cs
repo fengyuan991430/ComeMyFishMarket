@@ -13,6 +13,7 @@ namespace ComeMyFishMarket.Models
         public string OrderStatus { get; set; }
         public DateTime OrderDate { get; set; }
         public string UserID { get; set; }
+        public string FyTest { get; set; }
         //command
     }
 }
