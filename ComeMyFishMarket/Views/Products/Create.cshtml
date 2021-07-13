@@ -1,5 +1,7 @@
 ﻿@model ComeMyFishMarket.Models.Product
-
+@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+@inject UserManager<ComeMyFishMarketUser> UserManager
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,7 +16,7 @@
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ProductName" class="control-label"></label>
+                <label asp-for="ProductName" class="control-label">Product Name</label>
                 <input asp-for="ProductName" class="form-control" />
                 <span asp-validation-for="ProductName" class="text-danger"></span>
             </div>
@@ -34,19 +36,12 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProductImage" class="control-label"></label>
-                <input asp-for="ProductImage" class="form-control" type="file"/>
-                <span asp-validation-for="ProductImage" class="text-danger"></span>
+                <label class="control-label">Product Image</label>
+                <input class="form-control" type="file" name="files" />
             </div>
             <div class="form-group">
-                <label asp-for="ProductStatus" class="control-label"></label>
-                <input asp-for="ProductStatus" class="form-control" />
-                <span asp-validation-for="ProductStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserID" class="control-label"></label>
-                <input asp-for="UserID" class="form-control" />
-                <span asp-validation-for="UserID" class="text-danger"></span>
+                <label class="control-label"></label>
+                <input class="form-control" value="@UserManager.GetUserId(User)" name="userid" readonly/>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -58,6 +53,15 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+    </script>
+}
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

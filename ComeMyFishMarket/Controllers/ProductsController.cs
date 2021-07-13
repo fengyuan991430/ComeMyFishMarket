@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ComeMyFishMarket.Data;
 using ComeMyFishMarket.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace ComeMyFishMarket.Controllers
 {
@@ -54,18 +55,26 @@ namespace ComeMyFishMarket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductID,ProductName,Category,Quantity,Price,ProductImage,ProductStatus,UserID")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductID,ProductName,Category,Quantity,Price,ProductImage,ProductStatus,UserID")] Product product, IFormFile files, string userid)
         {
             BlobManager bm = new BlobManager();
-            HttpPostAttribute.GetCustomAttribute(file);
-            var filestream = System.IO.File.OpenRead(file);
-            
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(product);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
+            product.ProductStatus = "Active";
+            if (bm.UploadBlobImage(files,product.ProductName))
+            {
+                product.ProductImage = product.ProductName+files.FileName;
+                product.UserID = userid;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewBag.Message = "Please makesure that the uploaded image is jpg, jpeg and png file type!" + product.UserID + userid;
+            }
+
             return View(product);
         }
 
@@ -96,7 +105,7 @@ namespace ComeMyFishMarket.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.Message = product.ProductImage;
             if (ModelState.IsValid)
             {
                 try

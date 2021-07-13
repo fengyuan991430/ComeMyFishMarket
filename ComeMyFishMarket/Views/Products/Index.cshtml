@@ -5,14 +5,17 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Product List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Add New Product</a>
 </p>
 <table class="table">
     <thead>
         <tr>
+            <th>
+            @Html.DisplayNameFor(model => model.ProductImage)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProductName)
             </th>
@@ -24,22 +27,22 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductImage)
-            </th>
+            </th>            
             <th>
                 @Html.DisplayNameFor(model => model.ProductStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserID)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
+    BlobManager bm = new BlobManager();
+    List<string> bloblist = bm.ViewBlobImage(item.ProductImage);
+    string[] splitblob = bloblist[0].Split("#");
         <tr>
+            <td>
+                <img src="@splitblob[1]" width="200px" height="200px" />
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ProductName)
             </td>
@@ -53,13 +56,7 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductImage)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ProductStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserID)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ProductID">Edit</a> |

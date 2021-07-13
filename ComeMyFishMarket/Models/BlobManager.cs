@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
+using System.Web;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,37 +35,51 @@ namespace ComeMyFishMarket.Models
             container.CreateIfNotExistsAsync();
         }
 
-        public bool UploadBlobImage(List<IFormFile> files)
+        public bool UploadBlobImage(IFormFile files, string productname)
         {
             CloudBlobContainer container = getBlobContainerInformation();
-            if(container == null)
-            {
-                container.CreateIfNotExistsAsync();
-            }
+            container.CreateIfNotExistsAsync();
+            
             CloudBlockBlob blobitem = null;
-            foreach(var file in files)
+            try
             {
-                try
-                {
-                    blobitem = container.GetBlockBlobReference(file.FileName);
-                    if(Path.GetExtension(blobitem.Name) != ".jpg" || Path.GetExtension(blobitem.Name) != ".png" || Path.GetExtension(blobitem.Name) != ".jpeg")
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        var stream = file.OpenReadStream();
-                        blobitem.UploadFromStreamAsync(stream).Wait();
-                        return true;
-                    }
-                    
+                blobitem = container.GetBlockBlobReference(productname+files.FileName);
+                if(Path.GetExtension(blobitem.Name) != ".jpg" && Path.GetExtension(blobitem.Name) != ".png" && Path.GetExtension(blobitem.Name) != ".jpeg")
+                {                    
+                    return false;                    
                 }
-                catch (Exception ex)
+                else
                 {
-                    return false;
+                    var stream = files.OpenReadStream();
+                    blobitem.UploadFromStreamAsync(stream).Wait();
+                    return true;
+                }                    
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public List<string> ViewBlobImage(string ProductImage)
+        {
+            CloudBlobContainer container = this.getBlobContainerInformation();
+            List<string> bloblist = new List<string>();
+            BlobResultSegment listing = container.ListBlobsSegmentedAsync(null).Result;
+
+            foreach(IListBlobItem item in listing.Results)
+            {
+                if(item.GetType() == typeof(CloudBlockBlob))
+                {
+                    CloudBlockBlob blob = (CloudBlockBlob)item;
+                    if(blob.Name.Equals(ProductImage))
+                    {
+                        bloblist.Add(blob.Name+"#"+blob.Uri);
+                    }
                 }
             }
-            return false;
+
+            return bloblist;
         }
     }
 }
