@@ -72,7 +72,7 @@ namespace ComeMyFishMarket.Controllers
             }
             else
             {
-                ViewBag.Message = "Please makesure that the uploaded image is jpg, jpeg and png file type!" + product.UserID + userid;
+                ViewBag.Message = "Please makesure that the uploaded image is jpg, jpeg and png file type!";
             }
 
             return View(product);
@@ -99,13 +99,28 @@ namespace ComeMyFishMarket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductID,ProductName,Category,Quantity,Price,ProductImage,ProductStatus,UserID")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductID,ProductName,Category,Quantity,Price,ProductImage,ProductStatus,UserID")] Product product, IFormFile files)
         {
+            BlobManager bm = new BlobManager();
             if (id != product.ProductID)
             {
                 return NotFound();
+            }            
+            if(files != null)
+            {
+                string orifile = product.ProductName + files.FileName;
+                if(!product.ProductImage.Equals(orifile))
+                {
+                    if(bm.UploadBlobImage(files,product.ProductName))
+                    {
+                        product.ProductImage = product.ProductName + files.FileName;
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Please makesure that the uploaded image is jpg, jpeg and png file type!";
+                    }
+                }
             }
-            ViewBag.Message = product.ProductImage;
             if (ModelState.IsValid)
             {
                 try

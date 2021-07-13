@@ -9,15 +9,15 @@
 
 <h4>Product</h4>
 <hr />
-@{ 
-    
+@{
+
     BlobManager bm = new BlobManager();
     List<string> bloblist = bm.ViewBlobImage(Model.ProductImage);
     string[] splitblob = bloblist[0].Split("#");
 }
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ProductID" />
             <div class="form-group">
@@ -25,9 +25,11 @@
                 <img src="@splitblob[1]" height="350px" width="350px" />
             </div>
             <div class="form-group">
-                <label asp-for="ProductImage" class="control-label"></label>
-                <input asp-for="ProductImage" class="form-control" readonly/>
+                <input asp-for="ProductImage" class="form-control" readonly />
                 <span asp-validation-for="ProductImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="file" name="files" />
             </div>
             <div class="form-group">
                 <label asp-for="ProductName" class="control-label"></label>
@@ -51,7 +53,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ProductStatus" class="control-label"></label>
-                <select class="form-control" asp-for="ProductStatus">                    
+                <select class="form-control" asp-for="ProductStatus">
                     <option>Active</option>
                     <option>Inactive</option>
                 </select>
@@ -59,7 +61,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="UserID" class="control-label"></label>
-                <input asp-for="UserID" class="form-control" readonly/>
+                <input asp-for="UserID" class="form-control" readonly />
                 <span asp-validation-for="UserID" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -72,7 +74,14 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+    </script>
+}
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
