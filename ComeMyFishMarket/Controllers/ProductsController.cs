@@ -56,12 +56,16 @@ namespace ComeMyFishMarket.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductID,ProductName,Category,Quantity,Price,ProductImage,ProductStatus,UserID")] Product product)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            BlobManager bm = new BlobManager();
+            HttpPostAttribute.GetCustomAttribute(file);
+            var filestream = System.IO.File.OpenRead(file);
+            
+            //if (ModelState.IsValid)
+            //{
+            //    _context.Add(product);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToAction(nameof(Index));
+            //}
             return View(product);
         }
 

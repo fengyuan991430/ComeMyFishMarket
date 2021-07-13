@@ -7,6 +7,10 @@
     "mssql2": {
       "type": "mssql",
       "connectionId": "ComeMyFishMarketClassContext"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "blobstorageconnectortp046268"
     }
   }
 }
