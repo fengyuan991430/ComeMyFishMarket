@@ -3,6 +3,16 @@
     "mssql1": {
       "type": "mssql.local",
       "connectionId": "ComeMyFishMarketContextConnection"
+    },
+    "mssql2": {
+      "type": "mssql.local",
+      "connectionId": "ComeMyFishMarketClassContext"
+    },
+    "storage1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroup')]/providers/Microsoft.Storage/storageAccounts/comemyfishmarketblob",
+      "type": "storage.azure",
+      "connectionId": "blobstorageconnectortp046268",
+      "secretStore": "LocalSecretsFile"
     }
   }
 }
