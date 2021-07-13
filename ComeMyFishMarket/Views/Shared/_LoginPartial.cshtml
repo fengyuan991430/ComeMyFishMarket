@@ -1,34 +1,35 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using ComeMyFishMarket.Areas.Identity.Data
-
 @inject SignInManager<ComeMyFishMarketUser> SignInManager
 @inject UserManager<ComeMyFishMarketUser> UserManager
-@{
-    var curuser = await UserManager.FindByIdAsync(UserManager.GetUserId(User));
-}
+
     <ul class="navbar-nav">
         @if (SignInManager.IsSignedIn(User))
         {
-
+            var curuser = await UserManager.FindByIdAsync(UserManager.GetUserId(User));
             <li class="nav-item">
                 <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
             </li>
             if (curuser.Role.Equals("Admin"))
             {
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Product List</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="AdminProduct">Product List</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" asp-area="" asp-controller="MarketOrders" asp-action="Index">Order List</a>
                 </li>
             }
-            else if(curuser.Role.Equals("Seller"))
+            else if (curuser.Role.Equals("Seller"))
             {
-
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="SellerProduct">Product List</a>
+                </li>
             }
-            else if(curuser.Role.Equals("Customer"))
+            else if (curuser.Role.Equals("Customer"))
             {
-
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="CustomerProduct">Product List</a>
+                </li>
             }
 
             <li class="nav-item">
