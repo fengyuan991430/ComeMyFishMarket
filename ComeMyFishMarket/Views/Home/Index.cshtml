@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<ComeMyFishMarket.Models.Product>
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -38,6 +39,41 @@
     </a>
 </div>
 
+<form>
+    <div class="input-group pt-4 pb-2 mt-3">
+        <input class="form-control" style="border:1px solid #333;" placeholder="Enter keyword for product name or product category" name="keyword"/>
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+
+<div class="form-group">
+    <h2 style="margin-bottom:0px;">Available Products
+        <a asp-controller=" " asp-action=" "><i class="fa fa-shopping-cart fa-x" style="float:right;">&nbsp;</i></a> 
+    </h2>
+</div>
+
+<div class="card-deck pt-2 pb-4" >
+    @foreach (var product in Model)
+    {
+        BlobManager bm = new BlobManager();
+        List<string> bloblist = bm.ViewBlobImage(product.ProductImage);
+        string[] splitblob = bloblist[0].Split("#");
+        <div class="card my-3" style="min-width:255px; max-width:255px;">
+            <img class="card-img-top" src="@splitblob[1]" style="cursor:pointer;width:100%;height:200px;" >
+            <div class="card-body" style="display:flex; flex-direction:column; background:rgba(0,0,0,.03);">
+                <h5>@Html.DisplayFor(modelItem => product.ProductName)</h5>
+                <p>RM @Html.DisplayFor(modelItem => product.Price)</p>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 <style>
     .carousel-control-prev .fa-chevron-left,
@@ -67,9 +103,41 @@
         font-family: 'Gill Sans', cursive;
         font-weight: 600;
         color: #16F529;
-        text-transform:uppercase;
-        margin-bottom:24%;
+        text-transform: uppercase;
+        margin-bottom: 24%;
     }
+
+    .form-group {
+        margin-top:25px;
+        padding: 10px 0 10px;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+    }
+
+     h5 {
+        border-top: 2px solid #333;
+        padding-top: 10px;
+        font-size: 17px;
+        font-weight: 700;
+        display:flex;
+        flex-grow : 1;
+        -webkit-flex-grow: 1;
+    }
+
+    p {
+        line-height: 16px;
+        font-weight: 400;
+        display:flex;
+    }
+
+    .fa-x{
+        color:black
+    }
+
+    .fa-x:hover{
+        color:#0366d6
+    }
+
 </style>
 
 

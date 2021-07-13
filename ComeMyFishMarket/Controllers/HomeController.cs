@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ComeMyFishMarket.Models;
+using ComeMyFishMarket.Data;
 
 namespace ComeMyFishMarket.Controllers
 {
@@ -13,14 +14,24 @@ namespace ComeMyFishMarket.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ComeMyFishMarketClassContext _context;
+
+        public HomeController(ILogger<HomeController> logger, ComeMyFishMarketClassContext context)
         {
+            _context = context;
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string keyword)
         {
-            return View();
+            var product = from m in _context.Product select m;
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                product = product.Where(s => s.ProductName.Contains(keyword) || s.Category.Contains(keyword));
+            }
+
+            return View(product.Where(s => s.Quantity > 0 && s.ProductStatus == "Active").ToList());
         }
 
         public IActionResult Privacy()
