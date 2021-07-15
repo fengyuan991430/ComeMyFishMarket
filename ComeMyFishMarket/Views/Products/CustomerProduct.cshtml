@@ -6,21 +6,14 @@
 }
 
 <h1>Product List</h1>
-
-<form>
-    Search Product: <input type="text" name="FlowerName" /> &nbsp;&nbsp;&nbsp;
-    Filter By Category: @Html.DropDownList("Category", "All") &nbsp;&nbsp;&nbsp;
-    <input type="submit" name="search" value="Search Product" />
-</form>
+<h1></h1>
 <br />
 <table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductImage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductName)
+                Product Name
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Category)
@@ -31,15 +24,13 @@
             <th>
                 @Html.DisplayNameFor(model => model.Price)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStatus)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
+            
             BlobManager bm = new BlobManager();
             List<string> bloblist = bm.ViewBlobImage(item.ProductImage);
             string[] splitblob = bloblist[0].Split("#");
@@ -57,15 +48,15 @@
                     @Html.DisplayFor(modelItem => item.Quantity)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Price)
+                    RM @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProductStatus)
-                </td>
-                <td>
-                    <a asp-controller="OrderItems" asp-action="Add To Cart" asp-route-id="@item.ProductID">Edit</a>
+                    <a asp-controller="OrderItems" asp-action="Add To Cart" asp-route-id="@item.ProductID">Add To Cart</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<div>
+    <a asp-controller="AppUsers" asp-action="Index">Back to Seller List</a>
+</div>

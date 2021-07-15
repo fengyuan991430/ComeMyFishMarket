@@ -17,9 +17,11 @@ namespace ComeMyFishMarket
 {
     public class Program
     {
+        public static IHost host;
         public async static Task Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            host = CreateHostBuilder(args).Build();
+            //onhost = host;
             using (var scope = host.Services.CreateScope())
             {
                 var service = scope.ServiceProvider;

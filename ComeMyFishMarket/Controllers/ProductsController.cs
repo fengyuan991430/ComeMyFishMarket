@@ -30,7 +30,7 @@ namespace ComeMyFishMarket.Controllers
             return View(await _context.Product.ToListAsync());
         }
 
-        public async Task<IActionResult> AdminProduct(String ProductName, String ProductCategory)
+        public async Task<IActionResult> AdminProduct(String ProductName, String Category)
         {
             var product = from m in _context.Product select m;
             if(!String.IsNullOrEmpty(ProductName))
@@ -42,14 +42,14 @@ namespace ComeMyFishMarket.Controllers
             IEnumerable<SelectListItem> items = new SelectList(await TypeQuery.Distinct().ToListAsync());
             ViewBag.Category = items;
 
-            if(!String.IsNullOrEmpty(ProductCategory))
+            if(!String.IsNullOrEmpty(Category))
             {
-                product = product.Where(s => s.Category.Contains(ProductCategory));
+                product = product.Where(s => s.Category.Contains(Category));
             }
-            return View(await _context.Product.ToListAsync());
+            return View(await product.ToListAsync());
         }
 
-        public async Task<IActionResult> SellerProduct(String ProductName, String ProductCategory)
+        public async Task<IActionResult> SellerProduct(String ProductName, String Category)
         {
             var product = from m in _context.Product select m;
             if (!String.IsNullOrEmpty(ProductName))
@@ -61,30 +61,19 @@ namespace ComeMyFishMarket.Controllers
             IEnumerable<SelectListItem> items = new SelectList(await TypeQuery.Distinct().ToListAsync());
             ViewBag.Category = items;
 
-            if (!String.IsNullOrEmpty(ProductCategory))
+            if (!String.IsNullOrEmpty(Category))
             {
-                product = product.Where(s => s.Category.Contains(ProductCategory));
+                product = product.Where(s => s.Category.Contains(Category));
             }
-            return View(await _context.Product.ToListAsync());
+            return View(await product.ToListAsync());
         }
 
-        public async Task<IActionResult> CustomerProduct(String ProductName, String ProductCategory)
+        public async Task<IActionResult> CustomerProduct(String userid, String ProductName, String Category)
         {
-            var product = from m in _context.Product select m;
-            if (!String.IsNullOrEmpty(ProductName))
-            {
-                product = product.Where(s => s.ProductName.Contains(ProductName));
-            }
-            //Add Item into drop down list
-            IQueryable<string> TypeQuery = from m in _context.Product orderby m.Category select m.Category;
-            IEnumerable<SelectListItem> items = new SelectList(await TypeQuery.Distinct().ToListAsync());
-            ViewBag.Category = items;
+            var product = from m in _context.Product where m.UserID.Equals(userid) select m;
 
-            if (!String.IsNullOrEmpty(ProductCategory))
-            {
-                product = product.Where(s => s.Category.Contains(ProductCategory));
-            }
-            return View(await _context.Product.ToListAsync());
+
+            return View(await product.ToListAsync());
         }
 
         // GET: Products/Details/5

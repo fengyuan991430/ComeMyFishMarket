@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using ComeMyFishMarket.Models;
 
 namespace ComeMyFishMarket.Areas.Identity.Pages.Account
 {
@@ -97,8 +98,11 @@ namespace ComeMyFishMarket.Areas.Identity.Pages.Account
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
-                {                    
-                    //await _signInManager.SignInAsync(user, isPersistent: false);
+                {
+                    var curuser = await _userManager.FindByNameAsync(user.UserName);
+                    AppUser ap = new AppUser();
+                    ap.AddNewUser(curuser.Id, curuser.UserName, curuser.Email, curuser.Role);
+                    await _signInManager.SignInAsync(user, isPersistent: false);                    
                     return LocalRedirect(returnUrl);                    
                 }
                 foreach (var error in result.Errors)

@@ -2,16 +2,16 @@
 
 @{
     ViewData["Title"] = "Admin Product";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";    
 }
 
-<h1>Product List</h1>
+<h1>Product List </h1>
 
 <p>
     <a asp-action="Create">Add New Product</a>
 </p>
 <form>
-    Search Product: <input type="text" name="FlowerName" /> &nbsp;&nbsp;&nbsp;
+    Search Product: <input type="text" name="ProductName" /> &nbsp;&nbsp;&nbsp;
     Filter By Category: @Html.DropDownList("Category", "All") &nbsp;&nbsp;&nbsp;
     <input type="submit" name="search" value="Search Product" />
 </form>
@@ -32,7 +32,7 @@
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                RM @Html.DisplayNameFor(model => model.Price)
             </th>            
             <th>
                 @Html.DisplayNameFor(model => model.ProductStatus)
