@@ -50,9 +50,41 @@
 
 
 <div class="form-group">
-    <h2 style="margin-bottom:0px;">Available Products
-        <a asp-controller=" " asp-action=" "><i class="fa fa-shopping-cart fa-x" style="float:right;">&nbsp;</i></a> 
-    </h2>
+    <h2 class="my-auto">Available Products</h2>
+    @if (ViewBag.Cartcount > 0)
+    {
+        <a class="box" style="padding-right: 10px;position:relative">
+            <p style="justify-content:center; margin-bottom:0px; color:black;">@ViewBag.Cartcount</p>
+            <i class="fa fa-shopping-cart fa-2x" style="float:right;color:black"></i>      
+            <table>
+                    @foreach (var item in ViewBag.CartItem)
+                    {
+                        BlobManager bm = new BlobManager();
+                        List<string> bloblist = bm.ViewBlobImage(item.ProductImage);
+                        string[] splitblob = bloblist[0].Split("#");
+                        <tr>
+                            <td><img src="@splitblob[1]" width="50" height="50" /></td>
+                            <td>
+                                @item.ProductName
+                                <div>
+                                    Quantity: @item.Quantity x
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="text-center"><td class="pt-1" colspan="2"><a class="btn btn-success btn-sm" asp-action="" asp-controller=""> View Shopping Cart </a></td></tr>
+            </table>
+        </a>    
+    }
+    else
+    {
+        <a class="box" style="padding-right: 10px;position:relative"> 
+        <i class="fa fa-shopping-cart fa-2x" style="float:right;"></i>
+        <table>            
+            <tr class="text-center"><td colspan="2">No Product Yet</td></tr>
+        </table>
+        </a>
+    }
 </div>
 
 <div class="card-deck pt-2 pb-4" >
@@ -62,10 +94,14 @@
         List<string> bloblist = bm.ViewBlobImage(product.ProductImage);
         string[] splitblob = bloblist[0].Split("#");
         <div class="card my-3" style="min-width:255px; max-width:255px;">
-            <img class="card-img-top" src="@splitblob[1]" style="cursor:pointer;width:100%;height:200px;" >
+            <img class="card-img-top" src="@splitblob[1]" style="width:100%;height:200px;" >
             <div class="card-body" style="display:flex; flex-direction:column; background:rgba(0,0,0,.03);">
                 <h5>@Html.DisplayFor(modelItem => product.ProductName)</h5>
                 <p>RM @Html.DisplayFor(modelItem => product.Price)</p>
+                <div class="form-group-lg" style="display:flex;justify-content:space-between">
+                    <p class="my-auto">Quantity: @Html.DisplayFor(modelItem => product.Quantity)</p>
+                    <a asp-action="AddCart" asp-route-id="@product.ProductID" class="btn btn-sm btn-success" style="display:flex;"><i class="fa fa-cart-plus" style="font-size:15px; color:white" title="Add to Cart"></i></a>
+                </div>
             </div>
         </div>
     }
@@ -112,6 +148,8 @@
         padding: 10px 0 10px;
         border-top: 1px solid #333;
         border-bottom: 1px solid #333;
+        display:flex;
+        justify-content:space-between;
     }
 
      h5 {
@@ -122,20 +160,43 @@
         display:flex;
         flex-grow : 1;
         -webkit-flex-grow: 1;
+        margin-bottom:10px;
     }
 
     p {
         line-height: 16px;
         font-weight: 400;
         display:flex;
+        margin-bottom:6px;
     }
 
-    .fa-x{
-        color:black
+    .box:hover {
+        cursor:pointer;
     }
 
-    .fa-x:hover{
-        color:#0366d6
+    .box:hover table {
+        display: table
+    }
+
+    .box table td {
+        padding: 10px 10px;
+    }
+
+    .box table {
+        position: absolute;
+        margin-top: 14px;
+        right: 20px;
+        display: none;
+        z-index: 3;
+        background: white;
+        width: 240px;
+        border:1px black solid;
+    }
+
+    .box table tr {
+        transition: .3s;
+        -webkit-transition: .3s;
+        padding: 20px
     }
 
 </style>
