@@ -72,7 +72,7 @@ namespace ComeMyFishMarket.Controllers
             }
             else
             {
-                ViewBag.Message = "Please makesure that the uploaded image is jpg, jpeg and png file type!" + product.UserID + userid;
+                ViewBag.Message = "Please make sure that the uploaded image is jpg, jpeg and png file type!" + product.UserID + userid;
             }
 
             return View(product);
