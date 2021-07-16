@@ -21,11 +21,14 @@ namespace ComeMyFishMarket.Controllers
 
         private readonly UserManager<ComeMyFishMarketUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> userManager)
+        private readonly ComeMyFishMarketContext _context1;
+
+        public HomeController(ILogger<HomeController> logger, ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> userManager, ComeMyFishMarketContext context1)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
+            _context1 = context1;
         }
 
         public IActionResult Index(string keyword)
@@ -40,16 +43,22 @@ namespace ComeMyFishMarket.Controllers
             int count = result.Count;
             ViewBag.CartItem = result;
             ViewBag.Cartcount = count;
-            return View(product.Where(s => s.Quantity > 0 || s.ProductStatus == "Active").ToList());
+            return View(product.Where(s => s.Quantity > 0 && s.ProductStatus == "Active").ToList());
         }
 
         [Authorize]
         public IActionResult AddCart(int id)
         {
+            var user = _context1.Users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
+            if(user.Role != "Customer")
+            {
+                return LocalRedirect("/Identity/Account/Login");
+            }
+
             Product p = _context.Product.FirstOrDefault(x => x.ProductID == id);
             if (p != null && p.Quantity > 0)
             {
-                ShoppingCart cart = _context.ShoppingCart.FirstOrDefault(x => x.ProductId == id);
+                ShoppingCart cart = _context.ShoppingCart.FirstOrDefault(x => x.ProductId == id && x.CustomerId == user.Id);
                 if (cart != null)
                 {
                     cart.Quantity++;
@@ -70,6 +79,39 @@ namespace ComeMyFishMarket.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult RemoveUnit(int id)
+        {
+            var cartitem = _context.ShoppingCart.FirstOrDefault(x => x.ShoppingCartID == id);
+            if(cartitem!= null)
+            {
+                if(cartitem.Quantity > 1)
+                {
+                    cartitem.Quantity--;
+                }
+                else
+                {
+                    _context.ShoppingCart.Remove(cartitem);
+                }
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult TopUp()
+        {
+            var user = _context1.Users.FirstOrDefault(x=>x.Id == _userManager.GetUserId(User));
+            return View(user);
+        }
+
+        [HttpPost]
+        public IActionResult TopUp(double topup)
+        {
+            var user = _context1.Users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
+            user.UserWallet += topup;
+            _context1.SaveChanges();
+            return RedirectToAction("TopUp");
         }
 
         public IActionResult Privacy()

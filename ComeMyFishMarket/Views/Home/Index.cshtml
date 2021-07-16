@@ -68,11 +68,12 @@
                                 @item.ProductName
                                 <div>
                                     Quantity: @item.Quantity x
+                                    <a asp-action="RemoveUnit" asp-route-id="@item.ShoppingCartID"><i class="fa fa-trash ml-1" style="color:black" ></i></a>
                                 </div>
                             </td>
                         </tr>
                     }
-                    <tr class="text-center"><td class="pt-1" colspan="2"><a class="btn btn-success btn-sm" asp-action="" asp-controller=""> View Shopping Cart </a></td></tr>
+                    <tr class="text-center"><td class="pt-1" colspan="2"><a class="btn btn-success btn-sm" asp-action="Index" asp-controller="ShoppingCart"> View Shopping Cart </a></td></tr>
             </table>
         </a>    
     }

@@ -7,22 +7,39 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ComeMyFishMarket.Data;
 using ComeMyFishMarket.Models;
+using ComeMyFishMarket.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace ComeMyFishMarket.Controllers
 {
     public class OrderItemsController : Controller
     {
         private readonly ComeMyFishMarketClassContext _context;
+        private readonly UserManager<ComeMyFishMarketUser> _userManager;
 
-        public OrderItemsController(ComeMyFishMarketClassContext context)
+        public OrderItemsController(ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> UserManager)
         {
             _context = context;
+            _userManager = UserManager;
         }
 
         // GET: OrderItems
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.OrderItem.ToListAsync());
+            var result = _context.OrderItem.Where(x => x.UserID == _userManager.GetUserId(User));
+            var result1 = (from m in _context.MarketOrder
+                           join n in result on m.MarketOrderID equals n.OrderID
+                           select new OrderHistoryViewModelcs()
+                           {
+                               OrderID = m.MarketOrderID,
+                               OrderDate = m.OrderDate,
+                               ItemName = n.ItemName,
+                               Quantity = n.ItemQuantity,
+                               TotalPrice = n.TotalPrice,
+                               SellerID =  m.HandledBy,
+                               ItemID = n.ItemID
+                           }).ToList();
+            return View(result1);
         }
 
         // GET: OrderItems/Details/5
