@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ComeMyFishMarket.Models.Product>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Admin Product";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,6 +10,12 @@
 <p>
     <a asp-action="Create">Add New Product</a>
 </p>
+<form>
+    Search Product: <input type="text" name="FlowerName" /> &nbsp;&nbsp;&nbsp;
+    Filter By Category: @Html.DropDownList("Category", "All") &nbsp;&nbsp;&nbsp;
+    <input type="submit" name="search" value="Search Product" />
+</form>
+<br />
 <table class="table">
     <thead>
         <tr>

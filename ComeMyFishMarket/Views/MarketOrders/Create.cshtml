@@ -1,7 +1,4 @@
 ﻿@model ComeMyFishMarket.Models.MarketOrder
-@using Microsoft.AspNetCore.Identity
-@using ComeMyFishMarket.Areas.Identity.Data
-@inject UserManager<ComeMyFishMarketUser> UserManager
 
 @{
     ViewData["Title"] = "Create";
@@ -37,9 +34,14 @@
                 <span asp-validation-for="OrderDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserID" class="control-label" hidden></label>
-                <input asp-for="UserID" class="form-control" value="@UserManager.GetUserId(User)" disabled hidden /> 
+                <label asp-for="UserID" class="control-label"></label>
+                <input asp-for="UserID" class="form-control" />
                 <span asp-validation-for="UserID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HandledBy" class="control-label"></label>
+                <input asp-for="HandledBy" class="form-control" />
+                <span asp-validation-for="HandledBy" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
