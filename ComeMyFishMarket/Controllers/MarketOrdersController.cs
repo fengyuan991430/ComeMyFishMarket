@@ -58,6 +58,7 @@ namespace ComeMyFishMarket.Controllers
         {
             if (ModelState.IsValid)
             {
+                marketOrder.Get = "No";
                 _context.Add(marketOrder);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
