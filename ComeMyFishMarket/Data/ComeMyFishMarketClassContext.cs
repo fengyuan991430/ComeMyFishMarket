@@ -21,5 +21,7 @@ namespace ComeMyFishMarket.Data
         public DbSet<ComeMyFishMarket.Models.Payment> Payment { get; set; }
 
         public DbSet<ComeMyFishMarket.Models.Product> Product { get; set; }
+
+        public DbSet<ComeMyFishMarket.Models.ShoppingCart> ShoppingCart { get; set; }
     }
 }

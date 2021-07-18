@@ -1,0 +1,27 @@
+﻿@model ComeMyFishMarket.Areas.Identity.Data.ComeMyFishMarketUser
+@{
+    ViewData["Title"] = "TopUp";
+}
+
+<h1>Customer Wallet Top-Up</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Current Wallet Amount : </label>
+            <input asp-for="UserWallet" class="form-control" readonly />
+        </div>
+        <form asp-action="TopUp" method="post">
+            <div class="form-group">
+                <label>Top-Up Value: </label>
+                <input type="number" class="form-control" name="topup" required min="1" max="500"/>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Confirm" />
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
