@@ -95,6 +95,7 @@ namespace ComeMyFishMarket.Controllers
                 TotalAmount = cart.Sum(x => x.Quantity * x.Price),
                 UserID = _userManager.GetUserId(User),
                 HandledBy = id,
+                GetFeedback = "No"
             };
             _context.MarketOrder.Add(order);
             _context.SaveChanges();
