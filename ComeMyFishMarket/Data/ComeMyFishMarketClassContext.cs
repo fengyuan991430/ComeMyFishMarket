@@ -23,5 +23,7 @@ namespace ComeMyFishMarket.Data
         public DbSet<ComeMyFishMarket.Models.Product> Product { get; set; }
 
         public DbSet<ComeMyFishMarket.Models.AppUser> AppUser { get; set; }
+
+        public DbSet<ComeMyFishMarket.Models.ShoppingCart> ShoppingCart { get; set; }
     }
 }
