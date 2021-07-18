@@ -1,11 +1,14 @@
 ﻿@model ComeMyFishMarket.Models.FeedbackEntity
-
+@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+@inject UserManager<ComeMyFishMarketUser> UserManager
 @{
 
     ViewData["Title"] = "ViewSingleFeedback";
     TimeZoneInfo zone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time"); ;
     DateTime date = TimeZoneInfo.ConvertTime(Model.Feedback_Date, zone);
     ViewData["FeedbackDate"] = date;
+    var curuser = await UserManager.FindByIdAsync(UserManager.GetUserId(User));
 }
 
 <h1>View Feedback Details</h1>
@@ -47,5 +50,13 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Index">Back to Feedback List</a>
+    @if (!curuser.Role.Equals("Customer")) //seller
+    {
+        <a asp-action="OrderList">Back to Order List</a>
+    }
+    else
+    {
+        <a asp-action="CustomerOrder">Back to Order List</a>
+    }
+
 </div>

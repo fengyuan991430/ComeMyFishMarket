@@ -15,13 +15,14 @@
         };
         </script>
     }
+    int countOrder = 0;
 }
 
 <h1>Your Order</h1>
 
 
-<table class="table">
-    <thead>
+<table class="table table-hover">
+    <thead class="table-light">
         <tr>
             <th>
                 Order ID
@@ -38,8 +39,12 @@
             <th>
                 Order Date
             </th>
-            <th></th>
-            <th></th>
+            <th>
+                Customer
+            </th>
+            <th>
+                Action
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -47,36 +52,143 @@
         {
             if (item.HandledBy.Equals(UserManager.GetUserId(User)))
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MarketOrderID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.OrderDescription)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TotalAmount)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.OrderStatus)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.OrderDate)
-                    </td>
-                    <td>
-                        <a asp-action="ItemData" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
-                        @if (item.OrderStatus.Equals("Completed"))
-                        {
-                            <a asp-action="OrderPayment" asp-controller="MarketOrders" asp-route-id="@item.MarketOrderID">Proceed to Payment</a>
-                        }
-                        else
-                        {
-                            <a asp-action="PayDetails" asp-controller="Payments" asp-route-id="@item.MarketOrderID">View Payment Details</a>
-                        }
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MarketOrderID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDescription)
+            </td>
+            <td>
+                @{ 
+                    double price = item.TotalAmount;
+                }
+                RM @price
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @{
+                    var customer = UserManager.FindByIdAsync(item.UserID).Result;
+                }
+                @customer.UserName
+            </td>
+            <td>
+                @if (item.GetFeedback.Equals("Like"))
+                {
+                    <div class="row mt-2 mb-3">
+                        <div class="col-6">
+                            <form action="ViewSingleFeedback">
+                                <input type="hidden" name="pkey" value="@item.UserID" />
+                                <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                <input type="submit" class="btn btn-primary" value="View Feedback" />
+                            </form>
+                        </div>
+                        <div class="col-5">
+                            <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #000061; font-size: 25px"></i></label>
+                            <label for="feedback"><i class="fas fa-thumbs-down" style="color: #bbb; font-size: 25px"></i></label>
+                        </div>
+                    </div>
 
-                    </td>
-                </tr>
+                }
+                else if (item.GetFeedback.Equals("Dislike"))
+                {
+                    <div class="row mt-2 mb-3">
+                        <div class="col-6">
+                            <form action="ViewSingleFeedback">
+                                <input type="hidden" name="pkey" value="@item.UserID" />
+                                <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                <input type="submit" class="btn btn-primary" value="View Feedback" />
+                            </form>
+                        </div>
+                        <div class="col-5">
+                            <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #bbb; font-size: 25px"></i></label>
+                            <label for="feedback"><i class="fas fa-thumbs-down" style="color: #000061; font-size: 25px"></i></label>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row mt-2 mb-3">
+                        <div class="col ml-3">
+                            <a>No Feedback</a>
+                        </div>
+                    </div>
+                }
+
+                <a class="ml-2 pr-3" asp-action="ItemData" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
+                @if (item.OrderStatus.Equals("Completed"))
+                {
+                    <a class="pl-3" asp-action="OrderPayment" asp-controller="MarketOrders" asp-route-id="@item.MarketOrderID">Proceed to Payment</a>
+                }
+                else
+                {
+                    <a class="pl-3" asp-action="PayDetails" asp-controller="Payments" asp-route-id="@item.MarketOrderID">View Payment Details</a>
+                }
+
+            </td>
+        </tr>
+                countOrder += 1;
             }
         }
+        @if(countOrder == 0)
+            {
+                <tr>
+                    <td colspan="7" class="text-center">Customer order is currently empty</td>
+                </tr>
+            }
     </tbody>
 </table>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<style>
+    .feedback_reaction {
+        list-style-type: none;
+        margin: 25px 0 0 0;
+        padding: 0;
+    }
+
+        .feedback_reaction li {
+            float: left;
+            margin: 0 5px 0 0;
+            width: 100px;
+            height: 40px;
+            position: relative;
+        }
+
+        .feedback_reaction input[type="radio"] {
+            opacity: 0.01;
+            z-index: 100;
+        }
+
+            .feedback_reaction input[type="radio"]:checked + label,
+            .Checked + label {
+                color: #000061;
+            }
+
+        .feedback_reaction label,
+        .feedback_reaction input {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .feedback_reaction label {
+            color: #bbb;
+            font-size: 35px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+            .feedback_reaction label:hover {
+                color: #DDD;
+            }
+</style>
