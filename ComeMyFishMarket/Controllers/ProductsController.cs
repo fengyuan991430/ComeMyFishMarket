@@ -70,10 +70,21 @@ namespace ComeMyFishMarket.Controllers
 
         public async Task<IActionResult> CustomerProduct(String userid, String ProductName, String Category)
         {
-            var product = from m in _context.Product where m.UserID.Equals(userid) select m;
+            var product = from m in _context.Product select m;
+            if (!String.IsNullOrEmpty(ProductName))
+            {
+                product = product.Where(s => s.ProductName.Contains(ProductName));
+            }
+            //Add Item into drop down list
+            IQueryable<string> TypeQuery = from m in _context.Product orderby m.Category select m.Category;
+            IEnumerable<SelectListItem> items = new SelectList(await TypeQuery.Distinct().ToListAsync());
+            ViewBag.Category = items;
 
-
-            return View(await product.ToListAsync());
+            if (!String.IsNullOrEmpty(Category))
+            {
+                product = product.Where(s => s.Category.Contains(Category));
+            }
+            return View(await _context.Product.ToListAsync());
         }
 
         // GET: Products/Details/5
