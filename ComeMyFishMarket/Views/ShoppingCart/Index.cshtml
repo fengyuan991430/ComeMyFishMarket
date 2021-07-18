@@ -9,7 +9,11 @@
 <h1 style="margin-bottom:25px; font-family:cursive"><i class="fa fa-shopping-cart"></i>Shopping Cart </h1>
 @if (ViewBag.Message != null)
 {
-    <p class="text-danger">@ViewBag.Message</p>
+<script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+</script>
 }
 <table id="Cart" class="table w-100">
     <thead>

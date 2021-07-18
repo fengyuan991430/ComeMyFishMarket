@@ -11,6 +11,7 @@ namespace ComeMyFishMarket.Models
         public string PaymentDescription { get; set; }        
         public double TotalAmount { get; set; }
         public DateTime PaymentDate { get; set; }
+        public int MarketOrderID { get; set; }
         public string CustomerID { get; set; }
         public string ReceivedBy { get; set; }
     }

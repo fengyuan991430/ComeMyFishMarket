@@ -10,22 +10,22 @@ using ComeMyFishMarket.Models;
 
 namespace ComeMyFishMarket.Controllers
 {
-    public class PaymentsController : Controller
+    public class WalletHistoriesController : Controller
     {
         private readonly ComeMyFishMarketClassContext _context;
 
-        public PaymentsController(ComeMyFishMarketClassContext context)
+        public WalletHistoriesController(ComeMyFishMarketClassContext context)
         {
             _context = context;
         }
 
-        // GET: Payments
+        // GET: WalletHistories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Payment.ToListAsync());
+            return View(await _context.WalletHistory.ToListAsync());
         }
 
-        // GET: Payments/Details/5
+        // GET: WalletHistories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,60 +33,39 @@ namespace ComeMyFishMarket.Controllers
                 return NotFound();
             }
 
-            var payment = await _context.Payment
-                .FirstOrDefaultAsync(m => m.MarketOrderID == id);
-            if (payment == null)
+            var walletHistory = await _context.WalletHistory
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (walletHistory == null)
             {
                 return NotFound();
             }
 
-            return View(payment);
+            return View(walletHistory);
         }
 
-        public async Task<IActionResult> PayDetails(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var payment = await _context.Payment
-                .FirstOrDefaultAsync(m => m.MarketOrderID == id);
-            if (payment == null)
-            {
-                return NotFound();
-            }
-
-            return View(payment);
-        }
-
-        // GET: Payments/Create
+        // GET: WalletHistories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Payments/Create
+        // POST: WalletHistories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PaymentID,PaymentDescription,TotalAmount,PaymentDate,CustomerID,ReceivedBy")] Payment payment, int orderid)
+        public async Task<IActionResult> Create([Bind("ID,HistoryDesc,HistoryDate")] WalletHistory walletHistory)
         {
-            //product = from m in _context.Product select m;
-            //_context.ShoppingCart.Where(x => x.CustomerId == _userManager.GetUserId(User))
-            var order = _context.MarketOrder.Where(x => x.MarketOrderID == orderid);
-
             if (ModelState.IsValid)
             {
-                _context.Add(payment);
+                _context.Add(walletHistory);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(payment);
+            return View(walletHistory);
         }
 
-        // GET: Payments/Edit/5
+        // GET: WalletHistories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,22 +73,22 @@ namespace ComeMyFishMarket.Controllers
                 return NotFound();
             }
 
-            var payment = await _context.Payment.FindAsync(id);
-            if (payment == null)
+            var walletHistory = await _context.WalletHistory.FindAsync(id);
+            if (walletHistory == null)
             {
                 return NotFound();
             }
-            return View(payment);
+            return View(walletHistory);
         }
 
-        // POST: Payments/Edit/5
+        // POST: WalletHistories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PaymentID,PaymentDescription,TotalAmount,PaymentDate,CustomerID,ReceivedBy")] Payment payment)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,HistoryDesc,HistoryDate")] WalletHistory walletHistory)
         {
-            if (id != payment.PaymentID)
+            if (id != walletHistory.ID)
             {
                 return NotFound();
             }
@@ -118,12 +97,12 @@ namespace ComeMyFishMarket.Controllers
             {
                 try
                 {
-                    _context.Update(payment);
+                    _context.Update(walletHistory);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PaymentExists(payment.PaymentID))
+                    if (!WalletHistoryExists(walletHistory.ID))
                     {
                         return NotFound();
                     }
@@ -134,10 +113,10 @@ namespace ComeMyFishMarket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(payment);
+            return View(walletHistory);
         }
 
-        // GET: Payments/Delete/5
+        // GET: WalletHistories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,30 +124,30 @@ namespace ComeMyFishMarket.Controllers
                 return NotFound();
             }
 
-            var payment = await _context.Payment
-                .FirstOrDefaultAsync(m => m.PaymentID == id);
-            if (payment == null)
+            var walletHistory = await _context.WalletHistory
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (walletHistory == null)
             {
                 return NotFound();
             }
 
-            return View(payment);
+            return View(walletHistory);
         }
 
-        // POST: Payments/Delete/5
+        // POST: WalletHistories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var payment = await _context.Payment.FindAsync(id);
-            _context.Payment.Remove(payment);
+            var walletHistory = await _context.WalletHistory.FindAsync(id);
+            _context.WalletHistory.Remove(walletHistory);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PaymentExists(int id)
+        private bool WalletHistoryExists(int id)
         {
-            return _context.Payment.Any(e => e.PaymentID == id);
+            return _context.WalletHistory.Any(e => e.ID == id);
         }
     }
 }

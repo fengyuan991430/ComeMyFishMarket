@@ -1,0 +1,82 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+@model IEnumerable<ComeMyFishMarket.Models.MarketOrder>
+@inject UserManager<ComeMyFishMarketUser> UserManager
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (TempData["CompleteMsg"] != null)
+    {
+        ViewBag.Message = TempData["CompleteMsg"].ToString();
+        <script type="text/javascript">
+        window.onload = function () {
+
+            this.alert("@ViewBag.Message");
+        };
+        </script>
+    }
+}
+
+<h1>Your Order</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Order ID
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Total Amount
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Order Date
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            if (item.HandledBy.Equals(UserManager.GetUserId(User)))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MarketOrderID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDate)
+                    </td>
+                    <td>
+                        <a asp-action="ItemData" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
+                        @if (item.OrderStatus.Equals("Completed"))
+                        {
+                            <a asp-action="OrderPayment" asp-controller="MarketOrders" asp-route-id="@item.MarketOrderID">Proceed to Payment</a>
+                        }
+                        else
+                        {
+                            <a asp-action="PayDetails" asp-controller="Payments" asp-route-id="@item.MarketOrderID">View Payment Details</a>
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -14,12 +14,12 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="PaymentDescription" class="control-label"></label>
-                <input asp-for="PaymentDescription" class="form-control" />
+                <label asp-for="PaymentDescription" class="control-label">Payment Description</label>
+                <input asp-for="PaymentDescription" class="form-control" readonly/>
                 <span asp-validation-for="PaymentDescription" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TotalAmount" class="control-label"></label>
+                <label asp-for="TotalAmount" class="control-label">Payment Amount</label>
                 <input asp-for="TotalAmount" class="form-control" />
                 <span asp-validation-for="TotalAmount" class="text-danger"></span>
             </div>

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<ComeMyFishMarket.Models.WalletHistory>
+@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+@inject UserManager<ComeMyFishMarketUser> UserManager
+@{
+    ViewData["Title"] = "Wallet History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Wallet History</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Description
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                Recroded Date
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            if (item.UserID.Equals(UserManager.GetUserId(User)))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HistoryDesc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HistoryAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HistoryDate)
+                    </td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>

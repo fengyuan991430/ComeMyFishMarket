@@ -24,9 +24,9 @@ namespace ComeMyFishMarket.Controllers
         }
 
         // GET: OrderItems
-        public IActionResult Index()
+        public IActionResult Index(int orderid)
         {
-            var result = _context.OrderItem.Where(x => x.UserID == _userManager.GetUserId(User));
+            var result = _context.OrderItem.Where(x => x.UserID == _userManager.GetUserId(User) && x.OrderID == orderid);
             var result1 = (from m in _context.MarketOrder
                            join n in result on m.MarketOrderID equals n.OrderID
                            select new OrderHistoryViewModelcs()
@@ -37,6 +37,24 @@ namespace ComeMyFishMarket.Controllers
                                Quantity = n.ItemQuantity,
                                TotalPrice = n.TotalPrice,
                                SellerID =  m.HandledBy,
+                               ItemID = n.ItemID
+                           }).ToList();
+            return View(result1);
+        }
+
+        public IActionResult ItemData(int orderid)
+        {
+            var result = _context.OrderItem.Where(x => x.OrderID == orderid);
+            var result1 = (from m in _context.MarketOrder
+                           join n in result on m.MarketOrderID equals n.OrderID
+                           select new OrderHistoryViewModelcs()
+                           {
+                               OrderID = m.MarketOrderID,
+                               OrderDate = m.OrderDate,
+                               ItemName = n.ItemName,
+                               Quantity = n.ItemQuantity,
+                               TotalPrice = n.TotalPrice,
+                               SellerID = m.HandledBy,
                                ItemID = n.ItemID
                            }).ToList();
             return View(result1);

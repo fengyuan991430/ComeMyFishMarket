@@ -74,10 +74,23 @@ namespace ComeMyFishMarket.Controllers
         public IActionResult PlaceOrder(string id)
         {
             var cart = _context.ShoppingCart.Where(x => x.SellerId == id && x.CustomerId == _userManager.GetUserId(User)).ToList();
+            string orderdesc = null;
+            for(int i = 0; i < cart.Count; i++)
+            {
+                if(i == cart.Count-1)
+                {
+                    orderdesc = cart[i].ProductName;
+                }
+                else
+                {
+                    orderdesc = cart[i].ProductName + ", ";
+                }
+                
+            }
             MarketOrder order = new MarketOrder
             {
                 OrderDate = DateTime.Now,
-                OrderDescription = "Total Order Items: " + cart.Count,
+                OrderDescription = "Order Items: " + orderdesc,
                 OrderStatus = "Completed",
                 TotalAmount = cart.Sum(x => x.Quantity * x.Price),
                 UserID = _userManager.GetUserId(User),

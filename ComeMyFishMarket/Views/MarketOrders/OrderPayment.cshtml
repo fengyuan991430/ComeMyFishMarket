@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+@model ComeMyFishMarket.Models.MarketOrder
+@inject UserManager<ComeMyFishMarketUser> UserManager
+
+@{
+    ViewData["Title"] = "Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.Message != null)
+    {
+    <script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+    </script>
+    }
+}
+
+<h1>Make Payment</h1>
+
+<h4></h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="OrderPayment" method="post">
+            <input type="hidden" asp-for="MarketOrderID" />
+            <div class="form-group">
+                <label class="control-label">Payment Description</label>
+                <input class="form-control" value="Payment From @UserManager.GetUserName(User)" name="desc" readonly />
+            </div>
+            <div class="form-group">
+                <label class="control-label"></label>Total Amount
+                <input class="form-control" asp-for="TotalAmount" name="totalamount" readonly />
+            </div>
+            <div class="form-group">
+                <label class="control-label" hidden></label>
+                <input class="form-control" asp-for="UserID" name="userid" readonly hidden />
+            </div>
+            <div class="form-group">
+                <label class="control-label" hidden></label>
+                <input class="form-control" asp-for="HandledBy" name="receivedby" readonly hidden />
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Confirm Payment" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="CustomerOrder">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

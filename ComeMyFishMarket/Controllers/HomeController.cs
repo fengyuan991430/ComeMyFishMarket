@@ -21,14 +21,17 @@ namespace ComeMyFishMarket.Controllers
 
         private readonly UserManager<ComeMyFishMarketUser> _userManager;
 
+        private readonly SignInManager<ComeMyFishMarketUser> _signInManager;
+
         private readonly ComeMyFishMarketContext _context1;
 
-        public HomeController(ILogger<HomeController> logger, ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> userManager, ComeMyFishMarketContext context1)
+        public HomeController(ILogger<HomeController> logger, ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> userManager, ComeMyFishMarketContext context1, SignInManager<ComeMyFishMarketUser> signInManager)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
             _context1 = context1;
+            _signInManager = signInManager;
         }
 
         public IActionResult Index(string keyword)
@@ -50,10 +53,19 @@ namespace ComeMyFishMarket.Controllers
         public IActionResult AddCart(int id)
         {
             var user = _context1.Users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
-            if(user.Role != "Customer")
+            
+            if(_signInManager.IsSignedIn(User))
+            {
+                if(user.Role != "Customer")
+                {
+                    TempData["Validate"] = "Only Customer Can Add To Cart!";
+                    return RedirectToAction("Index","Home");
+                }
+            }
+            else
             {
                 return LocalRedirect("/Identity/Account/Login");
-            }
+            }            
 
             Product p = _context.Product.FirstOrDefault(x => x.ProductID == id);
             if (p != null && p.Quantity > 0)
@@ -107,10 +119,19 @@ namespace ComeMyFishMarket.Controllers
 
         [HttpPost]
         public IActionResult TopUp(double topup)
-        {
+        {            
             var user = _context1.Users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
             user.UserWallet += topup;
             _context1.SaveChanges();
+            WalletHistory topuphis = new WalletHistory
+            {
+                HistoryDesc = "Top Up",
+                HistoryAmount = "+" + topup.ToString(),
+                HistoryDate = DateTime.Now,
+                UserID = user.Id
+            };
+            _context.WalletHistory.Add(topuphis);
+            _context.SaveChanges();
             return RedirectToAction("TopUp");
         }
 

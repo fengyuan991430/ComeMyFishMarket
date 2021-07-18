@@ -35,7 +35,8 @@
     <tbody>
         @foreach (var item in Model)
         {
-            var sname = context.Users.FirstOrDefault(x => x.Id == item.SellerID);
+            var order = context1.MarketOrder.FirstOrDefault(x => x.MarketOrderID == item.OrderID);
+            var sname = context.Users.FirstOrDefault(x => x.Id == order.UserID);
             var image = context1.Product.FirstOrDefault(x => x.ProductID == item.ItemID);
             <tr>
                 <td>
@@ -58,19 +59,15 @@
                     RM @Html.DisplayFor(modelItem => item.TotalPrice)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.OrderDate), Seller Name : @sname
+                    @Html.DisplayFor(modelItem => item.OrderDate), Customer Name : @sname
                 </td>
             </tr>
         }
     </tbody>
-</table>
-@{ 
-    var curuser = await UserManager.GetUserAsync(User);
-    if(curuser.Role.Equals("Customer"))
-    {    
-        <a asp-controller="MarketOrders" asp-action="CustomerOrder">Back to Order List</a> 
-    }
-} 
+</table> 
+  <a asp-controller="MarketOrders" asp-action="OrderList">Back to Order List</a> 
+
+
 
 
 @section scripts{

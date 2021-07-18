@@ -7,7 +7,7 @@
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var receiver = context.AppUser.FirstOrDefault(x => x.RegUserID.Equals(Model.ReceivedBy));
+    var paid = context.AppUser.FirstOrDefault(x => x.RegUserID.Equals(Model.CustomerID));
 }
 
 <h1>Payment Details</h1>
@@ -34,13 +34,13 @@
             @Html.DisplayFor(model => model.PaymentDate)
         </dd>
         <dt class="col-sm-2">
-            Pay To:
+            Received From:
         </dt>
         <dd class="col-sm-10">
-            @receiver.Username
+            @paid.Username
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-controller="MarketOrders" asp-action="CustomerOrder">Back to Order List</a>
+    <a asp-controller="MarketOrders" asp-action="OrderList">Back to Order List</a>
 </div>

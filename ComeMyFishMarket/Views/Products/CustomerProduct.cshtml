@@ -51,12 +51,9 @@
                     RM @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
-                    <a asp-controller="OrderItems" asp-action="Add To Cart" asp-route-id="@item.ProductID">Add To Cart</a>
+                   <a asp-action="AddCart" asp-controller="Home" asp-route-id="@item.ProductID">Add To Cart</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<div>
-    <a asp-controller="AppUsers" asp-action="Index">Back to Seller List</a>
-</div>
