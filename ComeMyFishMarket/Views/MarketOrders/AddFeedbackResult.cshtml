@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "AddFeedbackResult";
+}
+
+<h1>Add Feedback Result</h1>
+
+<p>
+    The feedback is submitted 
+    @(ViewBag.result == 204 ? "successfully! ": "failed! ")
+</p>
+
+<div>
+    <a asp-action="Index">Back to Order List</a>
+</div>
+
+<p>
+    @if (ViewBag.Message != string.Empty)
+    {
+        @ViewBag.Message
+    }
+</p>

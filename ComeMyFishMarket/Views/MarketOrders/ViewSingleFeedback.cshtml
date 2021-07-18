@@ -1,0 +1,51 @@
+﻿@model ComeMyFishMarket.Models.FeedbackEntity
+
+@{
+
+    ViewData["Title"] = "ViewSingleFeedback";
+    TimeZoneInfo zone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time"); ;
+    DateTime date = TimeZoneInfo.ConvertTime(Model.Feedback_Date, zone);
+    ViewData["FeedbackDate"] = date;
+}
+
+<h1>View Feedback Details</h1>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+<div>
+    <h4>Order ID: @Html.DisplayFor(model => model.RowKey)</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2 mb-3">
+            Content:
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Feedback_Reaction.Equals("Like"))
+            {
+                <label for="feedback"><i class="fas fa-thumbs-up mr-3" style="color: #000061; font-size: 25px"></i></label>
+                <label for="feedback"><i class="fas fa-thumbs-down mb-3" style="color: #bbb; font-size: 25px"></i></label>
+            }
+            else
+            {
+                <label for="feedback"><i class="fas fa-thumbs-up mr-3" style="color: #bbb; font-size: 25px"></i></label>
+                <label for="feedback"><i class="fas fa-thumbs-down mb-3" style="color: #000061; font-size: 25px"></i></label>
+            }
+        </dd>
+        <dt class="col-sm-2 mb-3">
+
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Feedback_Content)
+        </dd>
+        <dt class="col-sm-2 mb-3">
+            Submit Date:
+        </dt>
+        <dd class="col-sm-10">
+            @ViewData["FeedbackDate"]
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to Feedback List</a>
+</div>

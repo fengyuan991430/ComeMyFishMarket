@@ -1,20 +1,25 @@
 ﻿@model IEnumerable<ComeMyFishMarket.Models.MarketOrder>
+@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+@inject UserManager<ComeMyFishMarketUser> UserManager
+
+@using ComeMyFishMarket.Data;
+@inject ComeMyFishMarketClassContext context;
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
-<h1>Index</h1>
+<h1>Market Order Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+
+<table class="table table-hover">
+    <thead class="table-light">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDescription)
+                Order ID
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TotalAmount)
@@ -26,41 +31,132 @@
                 @Html.DisplayNameFor(model => model.OrderDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserID)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.HandledBy)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HandledBy)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MarketOrderID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MarketOrderID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MarketOrderID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+
+            @if (item.UserID == UserManager.GetUserId(User))
+            {
+                var seller = UserManager.FindByIdAsync(item.HandledBy).Result;
+                var sellername = seller.UserName;
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MarketOrderID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDate)
+                    </td>
+                    <td>
+                        @sellername
+                    </td>
+                    <td>
+                        @if (item.GetFeedback.Equals("Like"))
+                        {
+                            <label for="feedback"><i class="fas fa-thumbs-up mr-3" style="color: #000061; font-size: 25px"></i></label>
+                            <label for="feedback"><i class="fas fa-thumbs-down mb-3" style="color: #bbb; font-size: 25px"></i></label>
+
+                            <form action="MarketOrders/ViewSingleFeedback">
+                                <input type="hidden" name="pkey" value="@UserManager.GetUserId(User)" />
+                                <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                <input type="submit" class="btn btn-primary" value="View" />
+                            </form>
+                        }
+                        else if (item.GetFeedback.Equals("Dislike"))
+                        {
+                            <label for="feedback"><i class="fas fa-thumbs-up mr-3" style="color: #bbb; font-size: 25px"></i></label>
+                            <label for="feedback"><i class="fas fa-thumbs-down mb-3" style="color: #000061; font-size: 25px"></i></label>
+
+                            <form action="MarketOrders/ViewSingleFeedback">
+                                <input type="hidden" name="pkey" value="@UserManager.GetUserId(User)" />
+                                <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                <input type="submit" class="btn btn-primary" value="View" />
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-action="AddFeedback" asp-route-id="@item.MarketOrderID" asp-route-sellerid="@item.HandledBy">Add Feedback</a>
+                        }
+
+
+
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5">Your order history is currently empty</td>
+                </tr>
+
+            }
+        }
     </tbody>
 </table>
+
+<p>
+    @if (ViewBag.Message != string.Empty)
+    {
+        @ViewBag.Message
+    }
+</p>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<style>
+    .feedback_reaction {
+        list-style-type: none;
+        margin: 25px 0 0 0;
+        padding: 0;
+    }
+
+        .feedback_reaction li {
+            float: left;
+            margin: 0 5px 0 0;
+            width: 100px;
+            height: 40px;
+            position: relative;
+        }
+
+        .feedback_reaction input[type="radio"] {
+            opacity: 0.01;
+            z-index: 100;
+        }
+
+            .feedback_reaction input[type="radio"]:checked + label,
+            .Checked + label {
+                color: #000061;
+            }
+
+        .feedback_reaction label,
+        .feedback_reaction input {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .feedback_reaction label {
+            color: #bbb;
+            font-size: 35px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+            .feedback_reaction label:hover {
+                color: #DDD;
+            }
+</style>
