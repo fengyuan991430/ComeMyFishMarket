@@ -57,6 +57,16 @@ namespace ComeMyFishMarket.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
+            [Display(Name = "Address")]
+            public string Address { get; set; }
+
+            [Required]
+            [StringLength(15, ErrorMessage = "The phone number is not valid.", MinimumLength = 7)]
+            [Phone]
+            [Display(Name = "Phone Number")]
+            public string PhoneNumber { get; set; }
+
+            [Required]
             [DataType(DataType.Text)]
             [Display(Name = "Role")]
             public string Role { get; set; }
@@ -92,6 +102,8 @@ namespace ComeMyFishMarket.Areas.Identity.Pages.Account
                     Email = Input.Email,
                     Role = Input.Role,
                     UserWallet = 0,
+                    PhoneNumber = Input.PhoneNumber,
+                    Address = Input.Address,
                     EmailConfirmed = true
                 };
 

@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ComeMyFishMarket.Data;
 using ComeMyFishMarket.Models;
+using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using Microsoft.WindowsAzure.Storage;
 
 namespace ComeMyFishMarket.Controllers
 {
@@ -54,7 +58,7 @@ namespace ComeMyFishMarket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MarketOrderID,OrderDescription,TotalAmount,OrderStatus,OrderDate,UserID")] MarketOrder marketOrder)
+        public async Task<IActionResult> Create([Bind("MarketOrderID,OrderDescription,TotalAmount,OrderStatus,OrderDate,UserID,HandledBy")] MarketOrder marketOrder)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +90,7 @@ namespace ComeMyFishMarket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MarketOrderID,OrderDescription,TotalAmount,OrderStatus,OrderDate,UserID")] MarketOrder marketOrder)
+        public async Task<IActionResult> Edit(int id, [Bind("MarketOrderID,OrderDescription,TotalAmount,OrderStatus,OrderDate,UserID,HandledBy")] MarketOrder marketOrder)
         {
             if (id != marketOrder.MarketOrderID)
             {
@@ -149,5 +153,108 @@ namespace ComeMyFishMarket.Controllers
         {
             return _context.MarketOrder.Any(e => e.MarketOrderID == id);
         }
+
+
+        // table storage - Feedback -------------------------------- start -------------------------------
+        private CloudTable getTableContainerInformation()
+        {
+            //read appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+            IConfigurationRoot configure = builder.Build();
+
+            //get access key from appsettings.json
+            CloudStorageAccount accountdetails = CloudStorageAccount
+                .Parse(configure["ConnectionStrings:blobstorageconnection"]);
+
+            //how to refer to an existing / new table in blob storage account
+            CloudTableClient clientagent = accountdetails.CreateCloudTableClient();
+            CloudTable table = clientagent.GetTableReference("Feedback");
+
+            return table;
+        }
+
+        //insert data into the table storage
+        public ActionResult AddFeedbackResult(string PartitionKey, string RowKey, string Feedback_Content, string Feedback_Reaction, string SellerID)
+        {
+            CloudTable table = getTableContainerInformation();
+            table.CreateIfNotExistsAsync();
+
+            //partition key = UserID (customer), row key = MarketOrderID
+
+            DateTime today = DateTime.Now;
+
+            FeedbackEntity feedback = new FeedbackEntity(PartitionKey, RowKey);
+            feedback.Feedback_Content = Feedback_Content;
+            feedback.Feedback_Date = today;
+            feedback.Feedback_Reaction = Feedback_Reaction;
+            feedback.SellerID = SellerID;
+
+
+            try
+            {
+                // Loads the current context and find the entity by the id
+                var marketOrder = _context.MarketOrder.Find(Convert.ToInt32(RowKey));
+
+                // Perform the changes you want..
+                marketOrder.GetFeedback = Feedback_Reaction;
+
+                // Then call save normally.
+                _context.Update(marketOrder);
+                _context.SaveChangesAsync();
+
+
+                TableOperation insertOperation = TableOperation.Insert(feedback);
+                TableResult insertResult = table.ExecuteAsync(insertOperation).Result;
+                ViewBag.result = insertResult.HttpStatusCode;
+                ViewBag.TableName = table.Name;
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.result = 100;
+                ViewBag.Message = "Error: " + ex.ToString();
+            }
+
+            return View();
+        }
+
+        public ActionResult AddFeedback(string id, string sellerid)
+        {
+
+            ViewData["ID"] = id;
+            ViewData["SellerID"] = sellerid;
+
+            return View();
+        }
+
+        public ActionResult ViewSingleFeedback(string pkey, string rkey)
+        {
+            CloudTable table = getTableContainerInformation();
+            string message = null;
+
+            try
+            {
+                TableOperation retrieveOperation = TableOperation.Retrieve<FeedbackEntity>(pkey, rkey);
+                TableResult result = table.ExecuteAsync(retrieveOperation).Result;
+
+                if (result.Etag != null)
+                {
+                    //convert the Feedback information from table result to become FeedbackEntity type
+                    var feedback = result.Result as FeedbackEntity;
+                    return View(feedback);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.ToString();
+            }
+
+
+            return RedirectToAction("Index", "MarketOrders", new { Message = message });
+        }
+        // table storage - Feedback -------------------------------- end ---------------------------------
     }
 }

@@ -6,6 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\ComeMyFishMarketClass\20210714191454_attCart.cs" />
+    <Compile Remove="Migrations\ComeMyFishMarketClass\20210714191454_attCart.Designer.cs" />
+    <Compile Remove="Migrations\ComeMyFishMarketClass\20210714191801_AttCart.cs" />
+    <Compile Remove="Migrations\ComeMyFishMarketClass\20210714191801_AttCart.Designer.cs" />
+    <Compile Remove="Migrations\ComeMyFishMarketClass\20210718004819_editTableVincentByJieShen.cs" />
+    <Compile Remove="Migrations\ComeMyFishMarketClass\20210718004819_editTableVincentByJieShen.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.3.0" />
     <PackageReference Include="Azure.Storage.Files.Shares" Version="12.1.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.2.0" />

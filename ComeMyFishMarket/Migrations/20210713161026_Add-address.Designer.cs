@@ -4,14 +4,16 @@ using ComeMyFishMarket.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ComeMyFishMarket.Migrations
 {
     [DbContext(typeof(ComeMyFishMarketContext))]
-    partial class ComeMyFishMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20210713161026_Add-address")]
+    partial class Addaddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

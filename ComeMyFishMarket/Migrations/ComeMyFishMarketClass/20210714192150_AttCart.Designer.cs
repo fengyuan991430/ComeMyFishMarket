@@ -4,14 +4,16 @@ using ComeMyFishMarket.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ComeMyFishMarket.Migrations.ComeMyFishMarketClass
 {
     [DbContext(typeof(ComeMyFishMarketClassContext))]
-    partial class ComeMyFishMarketClassContextModelSnapshot : ModelSnapshot
+    [Migration("20210714192150_AttCart")]
+    partial class AttCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,9 +27,6 @@ namespace ComeMyFishMarket.Migrations.ComeMyFishMarketClass
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("GetFeedback")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HandledBy")
                         .HasColumnType("nvarchar(max)");
@@ -140,6 +139,39 @@ namespace ComeMyFishMarket.Migrations.ComeMyFishMarketClass
                     b.HasKey("ProductID");
 
                     b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("ComeMyFishMarket.Models.ShoppingCart", b =>
+                {
+                    b.Property<int>("ShoppingCartID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SellerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ShoppingCartID");
+
+                    b.ToTable("ShoppingCart");
                 });
 #pragma warning restore 612, 618
         }

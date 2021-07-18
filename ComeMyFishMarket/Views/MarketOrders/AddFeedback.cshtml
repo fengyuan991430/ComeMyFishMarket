@@ -1,0 +1,98 @@
+﻿@model ComeMyFishMarket.Models.FeedbackEntity
+@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+
+@inject UserManager<ComeMyFishMarketUser> UserManager
+
+@{ ViewData["Title"] = "AddFeedback"; }
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<style>
+    .feedback_reaction {
+        list-style-type: none;
+        margin: 25px 0 0 0;
+        padding: 0;
+    }
+
+        .feedback_reaction li {
+            float: left;
+            margin: 0 5px 0 0;
+            width: 100px;
+            height: 40px;
+            position: relative;
+        }
+
+        .feedback_reaction input[type="radio"] {
+            opacity: 0.01;
+            z-index: 100;
+        }
+
+            .feedback_reaction input[type="radio"]:checked + label,
+            .Checked + label {
+                color: #000061;
+            }
+
+        .feedback_reaction label,
+        .feedback_reaction input {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .feedback_reaction label {
+            color: #bbb;
+            font-size: 35px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+            .feedback_reaction label:hover {
+                color: #DDD;
+            }
+</style>
+
+<h1>Add Feedback to Order ID: @ViewData["ID"]</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddFeedbackResult" asp-controller="MarketOrders" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SellerID" value="@ViewData["SellerID"]" />
+            <input type="hidden" asp-for="RowKey" value="@ViewData["ID"]" />
+            <input type="hidden" asp-for="PartitionKey" value="@UserManager.GetUserId(User)" />
+
+            <div class="form-group">
+                <ul class="feedback_reaction">
+                    <li>
+                        <input type="radio" class="form-control" asp-for="Feedback_Reaction" value="Like" required />
+                        <label asp-for="Feedback_Reaction"><i class="fas fa-thumbs-up"></i></label>
+                    </li>
+                    <li>
+                        <input type="radio" class="form-control" asp-for="Feedback_Reaction" value="Dislike" />
+                        <label asp-for="Feedback_Reaction"><i class="fas fa-thumbs-down"></i></label>
+                    </li>
+                </ul>
+            </div>
+
+            <br><br>
+
+            <div class="form-group mt-2">
+                <label class="control-label">Content:</label>
+                <input asp-for="Feedback_Content" class="form-control" required />
+                <span asp-validation-for="Feedback_Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

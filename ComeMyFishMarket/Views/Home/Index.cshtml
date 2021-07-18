@@ -1,8 +1,205 @@
-﻿@{
+﻿@model IEnumerable<ComeMyFishMarket.Models.Product>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000">
+    <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img class="d-block w-100" src="~/lib/images/background1.jpg" alt="First slide" height="485" style="filter: brightness(70%);">
+            <div class="carousel-caption">
+                <h1> come my fish market</h1>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img class="d-block w-100" src="~/lib/images/background2.jpg" alt="Second slide" height="485" style="filter: brightness(70%);">
+            <div class="carousel-caption">
+                <h1>come my fish market</h1>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img class="d-block w-100" src="~/lib/images/background.jpeg" alt="Third slide" height="485" style="filter: brightness(70%);">
+            <div class="carousel-caption">
+                <h1>come my fish market</h1>
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="fa fa-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="fa fa-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
 </div>
+
+<form>
+    <div class="input-group pt-4 pb-2 mt-3">
+        <input class="form-control" style="border:1px solid #333;" placeholder="Enter keyword for product name or product category" name="keyword"/>
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+
+<div class="form-group">
+    <h2 class="my-auto">Available Products</h2>
+    @if (ViewBag.Cartcount > 0)
+    {
+        <a class="box" style="padding-right: 10px;position:relative">
+            <p style="justify-content:center; margin-bottom:0px; color:black;">@ViewBag.Cartcount</p>
+            <i class="fa fa-shopping-cart fa-2x" style="float:right;color:black"></i>      
+            <table>
+                    @foreach (var item in ViewBag.CartItem)
+                    {
+                        BlobManager bm = new BlobManager();
+                        List<string> bloblist = bm.ViewBlobImage(item.ProductImage);
+                        string[] splitblob = bloblist[0].Split("#");
+                        <tr>
+                            <td><img src="@splitblob[1]" width="50" height="50" /></td>
+                            <td>
+                                @item.ProductName
+                                <div>
+                                    Quantity: @item.Quantity x
+                                    <a asp-action="RemoveUnit" asp-route-id="@item.ShoppingCartID"><i class="fa fa-trash ml-1" style="color:black" ></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="text-center"><td class="pt-1" colspan="2"><a class="btn btn-success btn-sm" asp-action="Index" asp-controller="ShoppingCart"> View Shopping Cart </a></td></tr>
+            </table>
+        </a>    
+    }
+    else
+    {
+        <a class="box" style="padding-right: 10px;position:relative"> 
+        <i class="fa fa-shopping-cart fa-2x" style="float:right;"></i>
+        <table>            
+            <tr class="text-center"><td colspan="2">No Product Yet</td></tr>
+        </table>
+        </a>
+    }
+</div>
+
+<div class="card-deck pt-2 pb-4" >
+    @foreach (var product in Model)
+    {
+        BlobManager bm = new BlobManager();
+        List<string> bloblist = bm.ViewBlobImage(product.ProductImage);
+        string[] splitblob = bloblist[0].Split("#");
+        <div class="card my-3" style="min-width:255px; max-width:255px;">
+            <img class="card-img-top" src="@splitblob[1]" style="width:100%;height:200px;" >
+            <div class="card-body" style="display:flex; flex-direction:column; background:rgba(0,0,0,.03);">
+                <h5>@Html.DisplayFor(modelItem => product.ProductName)</h5>
+                <p>RM @Html.DisplayFor(modelItem => product.Price)</p>
+                <div class="form-group-lg" style="display:flex;justify-content:space-between">
+                    <p class="my-auto">Quantity: @Html.DisplayFor(modelItem => product.Quantity)</p>
+                    <a asp-action="AddCart" asp-route-id="@product.ProductID" class="btn btn-sm btn-success" style="display:flex;"><i class="fa fa-cart-plus" style="font-size:15px; color:white" title="Add to Cart"></i></a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<style>
+    .carousel-control-prev .fa-chevron-left,
+    .carousel-control-next .fa-chevron-right {
+        position: absolute;
+        top: 45%;
+        background-color: #16F529;
+        width: 38px;
+        height: 38px;
+        line-height: 40px;
+        border-radius: 50px;
+    }
+
+    .carousel-control-prev .fa-chevron-left {
+        left: 20px;
+    }
+
+    .carousel-control-next .fa-chevron-right {
+        right: 20px;
+    }
+
+    .carousel-indicators .active {
+        background-color: #16F529;
+    }
+
+    h1 {
+        font-family: 'Gill Sans', cursive;
+        font-weight: 600;
+        color: #16F529;
+        text-transform: uppercase;
+        margin-bottom: 24%;
+    }
+
+    .form-group {
+        margin-top:25px;
+        padding: 10px 0 10px;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+        display:flex;
+        justify-content:space-between;
+    }
+
+     h5 {
+        border-top: 2px solid #333;
+        padding-top: 10px;
+        font-size: 17px;
+        font-weight: 700;
+        display:flex;
+        flex-grow : 1;
+        -webkit-flex-grow: 1;
+        margin-bottom:10px;
+    }
+
+    p {
+        line-height: 16px;
+        font-weight: 400;
+        display:flex;
+        margin-bottom:6px;
+    }
+
+    .box:hover {
+        cursor:pointer;
+    }
+
+    .box:hover table {
+        display: table
+    }
+
+    .box table td {
+        padding: 10px 10px;
+    }
+
+    .box table {
+        position: absolute;
+        margin-top: 14px;
+        right: 20px;
+        display: none;
+        z-index: 3;
+        background: white;
+        width: 240px;
+        border:1px black solid;
+    }
+
+    .box table tr {
+        transition: .3s;
+        -webkit-transition: .3s;
+        padding: 20px
+    }
+
+</style>
+
+

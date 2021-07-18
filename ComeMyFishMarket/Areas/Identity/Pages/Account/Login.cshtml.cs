@@ -83,17 +83,6 @@ namespace ComeMyFishMarket.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    //User Role identification
-                    var user = new ComeMyFishMarketUser
-                    {
-                        UserName = Input.Username,
-                    };
-                    var loguser = await _userManager.FindByNameAsync(user.UserName);
-                    var userrole = loguser.Role;
-                    if(userrole.Equals("Admin"))
-                    {
-
-                    }
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
