@@ -141,39 +141,6 @@ namespace ComeMyFishMarket.Migrations.ComeMyFishMarketClass
 
                     b.ToTable("Product");
                 });
-
-            modelBuilder.Entity("ComeMyFishMarket.Models.ShoppingCart", b =>
-                {
-                    b.Property<int>("ShoppingCartID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductImage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SellerId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ShoppingCartID");
-
-                    b.ToTable("ShoppingCart");
-                });
 #pragma warning restore 612, 618
         }
     }
