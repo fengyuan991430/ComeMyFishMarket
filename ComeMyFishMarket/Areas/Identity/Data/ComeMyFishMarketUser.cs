@@ -15,5 +15,8 @@ namespace ComeMyFishMarket.Areas.Identity.Data
         [PersonalData]
         public double UserWallet { get; set; }
 
+        [PersonalData]
+        public string Address { get; set; }
+
     }
 }

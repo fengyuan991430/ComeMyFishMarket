@@ -1,0 +1,93 @@
+﻿@model IEnumerable<ComeMyFishMarket.Models.ShoppingCart>
+@using ComeMyFishMarket.Data;
+@inject ComeMyFishMarketContext context
+@using Microsoft.AspNetCore.Identity
+@using ComeMyFishMarket.Areas.Identity.Data
+@inject UserManager<ComeMyFishMarketUser> UserManager
+@{
+    ViewData["Title"] = "Checkout";
+    double Total = 0;
+    var userid = UserManager.GetUserId(User);
+    var user = context.Users.FirstOrDefault(x => x.Id == userid);
+}
+
+<h1 style="margin-bottom:15px; font-family:cursive">Check Out </h1>
+
+<div style="  margin-bottom:15px;"> 
+    <h4 style="margin-bottom:10px; font-family:cursive;padding:15px 0 0 15px">Delivery Address  </h4>
+    <div style="display:flex;">
+        <p><strong>@user.UserName &nbsp; (+@user.PhoneNumber)</strong>  </p>
+        <p><strong>@user.Address</strong></p>
+        <p> <strong>@user.Email</strong></p>
+    </div>
+</div>
+<form asp-action="PlaceOrder" asp-route-id="@ViewBag.Seller" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Product
+                </th>
+                <th>
+                    Unit Price
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Total Price
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                BlobManager bm = new BlobManager();
+                List<string> bloblist = bm.ViewBlobImage(item.ProductImage);
+                string[] splitblob = bloblist[0].Split("#");
+                double i = item.Price * item.Quantity;
+                Total = Total + i;
+                <tr>
+                    <td>
+                        <img src="@splitblob[1]" width="70" height="60" />
+                        &nbsp;&nbsp;
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        RM @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity) x
+                    </td>
+                    <td>
+                        RM @i
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="3" style="text-align:right">
+                    <h3>Final Order Price : </h3>
+                </td>
+                <td>
+                    <h3>RM @Total</h3>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2" class="text-center">
+                    <input type="submit" class="btn btn-success btn-lg" value="Place Order" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+
+<style>
+    td {
+        vertical-align: middle !important;
+    }
+    p{
+        padding: 0 15px 0
+    }
+</style>

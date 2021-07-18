@@ -196,6 +196,16 @@ namespace ComeMyFishMarket.Controllers
                 try
                 {
                     _context.Update(product);
+                    var cartitem = _context.ShoppingCart.Where(x => x.ProductId == product.ProductID).ToList();
+                    if(cartitem.Count > 0)
+                    {
+                        foreach (var item in cartitem)
+                        {
+                            item.ProductImage = product.ProductImage;
+                            item.ProductName = product.ProductName;
+                            item.Price = product.Price;
+                        }
+                    }                   
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
