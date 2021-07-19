@@ -15,6 +15,7 @@
         };
         </script>
     }
+    var curuser = await UserManager.FindByIdAsync(UserManager.GetUserId(User));
     int countOrder = 0;
 }
 
@@ -27,7 +28,7 @@
             <th>
                 Order ID
             </th>
-            <th>
+            <th width="200">
                 Description
             </th>
             <th>
@@ -39,108 +40,205 @@
             <th>
                 Order Date
             </th>
-            <th>
+            <th width="150">
                 Customer
             </th>
-            <th>
+            <th width="345">
                 Action
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (curuser.Role.Equals("Seller"))
         {
-            if (item.HandledBy.Equals(UserManager.GetUserId(User)))
+            @foreach (var item in Model)
             {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MarketOrderID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDescription)
-            </td>
-            <td>
-                @{ 
-                    double price = item.TotalAmount;
-                }
-                RM @price
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDate)
-            </td>
-            <td>
-                @{
-                    var customer = UserManager.FindByIdAsync(item.UserID).Result;
-                }
-                @customer.UserName
-            </td>
-            <td>
-                @if (item.GetFeedback.Equals("Like"))
+                if (item.HandledBy.Equals(curuser.Id))
                 {
-                    <div class="row mt-2 mb-3">
-                        <div class="col-6">
-                            <form action="ViewSingleFeedback">
-                                <input type="hidden" name="pkey" value="@item.UserID" />
-                                <input type="hidden" name="rkey" value="@item.MarketOrderID" />
-                                <input type="submit" class="btn btn-primary" value="View Feedback" />
-                            </form>
-                        </div>
-                        <div class="col-5">
-                            <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #000061; font-size: 25px"></i></label>
-                            <label for="feedback"><i class="fas fa-thumbs-down" style="color: #bbb; font-size: 25px"></i></label>
-                        </div>
-                    </div>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MarketOrderID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderDescription)
+                        </td>
+                        <td>
+                            @{
+                                double price = item.TotalAmount;
+                            }
+                            RM @price
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderDate)
+                        </td>
+                        <td>
+                            @{
+                                var customer = UserManager.FindByIdAsync(item.UserID).Result;
+                            }
+                            @customer.UserName
+                        </td>
+                        <td>
+                            @if (item.GetFeedback.Equals("Like"))
+                            {
+                                <div class="row mt-2 mb-3">
+                                    <div class="col-6">
+                                        <form action="ViewSingleFeedback">
+                                            <input type="hidden" name="pkey" value="@item.UserID" />
+                                            <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                            <input type="submit" class="btn btn-primary" value="View Feedback" />
+                                        </form>
+                                    </div>
+                                    <div class="col-5">
+                                        <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #000061; font-size: 25px"></i></label>
+                                        <label for="feedback"><i class="fas fa-thumbs-down" style="color: #bbb; font-size: 25px"></i></label>
+                                    </div>
+                                </div>
 
-                }
-                else if (item.GetFeedback.Equals("Dislike"))
-                {
-                    <div class="row mt-2 mb-3">
-                        <div class="col-6">
-                            <form action="ViewSingleFeedback">
-                                <input type="hidden" name="pkey" value="@item.UserID" />
-                                <input type="hidden" name="rkey" value="@item.MarketOrderID" />
-                                <input type="submit" class="btn btn-primary" value="View Feedback" />
-                            </form>
-                        </div>
-                        <div class="col-5">
-                            <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #bbb; font-size: 25px"></i></label>
-                            <label for="feedback"><i class="fas fa-thumbs-down" style="color: #000061; font-size: 25px"></i></label>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="row mt-2 mb-3">
-                        <div class="col ml-3">
-                            <a>No Feedback</a>
-                        </div>
-                    </div>
-                }
+                            }
+                            else if (item.GetFeedback.Equals("Dislike"))
+                            {
+                                <div class="row mt-2 mb-3">
+                                    <div class="col-6">
+                                        <form action="ViewSingleFeedback">
+                                            <input type="hidden" name="pkey" value="@item.UserID" />
+                                            <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                            <input type="submit" class="btn btn-primary" value="View Feedback" />
+                                        </form>
+                                    </div>
+                                    <div class="col-5">
+                                        <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #bbb; font-size: 25px"></i></label>
+                                        <label for="feedback"><i class="fas fa-thumbs-down" style="color: #000061; font-size: 25px"></i></label>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row mt-2 mb-3">
+                                    <div class="col ml-3">
+                                        <a>No Feedback</a>
+                                    </div>
+                                </div>
+                            }
 
-                <a class="ml-2 pr-3" asp-action="ItemData" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
-                @if (item.OrderStatus.Equals("Completed"))
-                {
-                    <a class="pl-3" asp-action="OrderPayment" asp-controller="MarketOrders" asp-route-id="@item.MarketOrderID">Proceed to Payment</a>
-                }
-                else
-                {
-                    <a class="pl-3" asp-action="PayDetails" asp-controller="Payments" asp-route-id="@item.MarketOrderID">View Payment Details</a>
-                }
+                            <a class="ml-2 pr-3" asp-action="ItemData" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
+                            @if (item.OrderStatus.Equals("Completed"))
+                            {
+                                <a class="pl-3" asp-action="OrderPayment" asp-controller="MarketOrders" asp-route-id="@item.MarketOrderID">Proceed to Payment</a>
+                            }
+                            else
+                            {
+                                <a class="pl-3" asp-action="PayDetails" asp-controller="Payments" asp-route-id="@item.MarketOrderID">View Payment Details</a>
+                            }
 
-            </td>
-        </tr>
-                countOrder += 1;
+                        </td>
+                    </tr>
+                    countOrder += 1;
+                }
+            }
+
+        }
+        else // admin
+        {
+            @foreach (var item in Model)
+            {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MarketOrderID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderDescription)
+                        </td>
+                        <td>
+                            @{
+                                double price = item.TotalAmount;
+                            }
+                            RM @price
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderDate)
+                        </td>
+                        <td>
+                            @{
+                                var customer = UserManager.FindByIdAsync(item.UserID).Result;
+                            }
+                            @customer.UserName
+                        </td>
+                        <td>
+                            @if (item.GetFeedback.Equals("Like"))
+                            {
+                                <div class="row mt-2 mb-3">
+                                    <div class="col-6">
+                                        <form action="ViewSingleFeedback">
+                                            <input type="hidden" name="pkey" value="@item.UserID" />
+                                            <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                            <input type="submit" class="btn btn-primary" value="View Feedback" />
+                                        </form>
+                                    </div>
+                                    <div class="col-5">
+                                        <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #000061; font-size: 25px"></i></label>
+                                        <label for="feedback"><i class="fas fa-thumbs-down" style="color: #bbb; font-size: 25px"></i></label>
+                                    </div>
+                                </div>
+
+                            }
+                            else if (item.GetFeedback.Equals("Dislike"))
+                            {
+                                <div class="row mt-2 mb-3">
+                                    <div class="col-6">
+                                        <form action="ViewSingleFeedback">
+                                            <input type="hidden" name="pkey" value="@item.UserID" />
+                                            <input type="hidden" name="rkey" value="@item.MarketOrderID" />
+                                            <input type="submit" class="btn btn-primary" value="View Feedback" />
+                                        </form>
+                                    </div>
+                                    <div class="col-5">
+                                        <label for="feedback"><i class="fas fa-thumbs-up pr-3" style="color: #bbb; font-size: 25px"></i></label>
+                                        <label for="feedback"><i class="fas fa-thumbs-down" style="color: #000061; font-size: 25px"></i></label>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row mt-2 mb-3">
+                                    <div class="col ml-3">
+                                        <a>No Feedback</a>
+                                    </div>
+                                </div>
+                            }
+
+                            <a class="ml-2 pr-3" asp-action="ItemData" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
+                            @if (item.OrderStatus.Equals("Completed"))
+                            {
+                                <a class="pl-3" asp-action="OrderPayment" asp-controller="MarketOrders" asp-route-id="@item.MarketOrderID">Proceed to Payment</a>
+                            }
+                            else
+                            {
+                                <a class="pl-3" asp-action="PayDetails" asp-controller="Payments" asp-route-id="@item.MarketOrderID">View Payment Details</a>
+                            }
+
+                        </td>
+                    </tr>
+                    countOrder += 1;
+                
             }
         }
-        @if(countOrder == 0)
-            {
-                <tr>
-                    <td colspan="7" class="text-center">Customer order is currently empty</td>
-                </tr>
-            }
+
+
+
+
+
+        @if (countOrder == 0) //show message for empty data
+        {
+            <tr>
+                <td colspan="7" class="text-center">Customer order is currently empty</td>
+            </tr>
+        }
     </tbody>
 </table>
 
