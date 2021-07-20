@@ -22,6 +22,9 @@
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="" asp-controller="WalletHistories" asp-action="Index">Wallet History</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="MarketOrders" asp-action="ViewReport">View Report</a>
+            </li>
         }
         else if (curuser.Role.Equals("Customer"))
         {

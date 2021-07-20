@@ -388,6 +388,47 @@ namespace ComeMyFishMarket.Controllers
             return RedirectToAction("CustomerOrder", "MarketOrders", new { Message = message });
         }
 
+        public ActionResult ViewReport(int Year, int Month)
+        {
+            //select all from MarketOrder
+            var marketorder = from mo in _context.MarketOrder
+                              select mo;
+
+            //select HandledBy from MarketOrder OrderBy HandledBy
+            IQueryable<string> sql_seller = from mo in _context1.Users
+                                       where mo.Role == "Seller"
+                                       select mo.UserName;
+
+            ViewBag.Seller = sql_seller.Distinct().ToList();
+
+            //select Year(OrderDate) from MarketOrder OrderBy Year(OrderDate)
+            IQueryable<int> sql_year = from mo in _context.MarketOrder
+                                          orderby mo.OrderDate.Year
+                                          select mo.OrderDate.Year;
+
+
+            IEnumerable<SelectListItem> exist_year =
+                new SelectList( sql_year.Distinct().ToList() );
+
+            ViewBag.Year = exist_year;
+            ViewData["SelectedYear"] = "";
+            ViewData["SelectedMonth"] = "";
+
+            if (Year != 0)
+            {
+                marketorder = marketorder.Where(mo => mo.OrderDate.Year.Equals(Year));
+                ViewData["SelectedYear"] = Year;
+            }
+
+            if (Month != 0)
+            {
+                marketorder = marketorder.Where(mo => mo.OrderDate.Month.Equals(Month));
+                ViewData["SelectedMonth"] = Month;
+            }
+
+            return View( marketorder.ToList() );
+        }
+
 
     }
 }
