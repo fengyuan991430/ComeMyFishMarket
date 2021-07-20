@@ -5,63 +5,199 @@
 
 @{
     ViewData["Title"] = "ViewReport";
-    string[] month_name = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+    string[] month_name = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
+    var curuser = await UserManager.FindByIdAsync(UserManager.GetUserId(User));
 
 }
-
-<h1>View Report</h1>
-@foreach (var sellername in ViewBag.Seller)
-{
-
-
-    var sellerid = await UserManager.FindByNameAsync(sellername);
-    <p>@sellername: @sellerid.Id</p>
-    double total = 0;
-
-    @foreach (var item in Model)
-    {
-        if (item.HandledBy.Equals(sellerid.Id) && item.OrderDate.Year.Equals(ViewData["SelectedYear"]))
-        {
-            total += item.TotalAmount;
-        }
-    }
-    <p>total amount 2021: @total</p>
-
-}
-<form method="post">
-    <div class="row mb-5 mt-5">
-        <div class="col-4">
-            @Html.DropDownList("Year", ViewBag.Year, "All Year", new { @class = "form-control" })
-        </div>
-        <div class="col-4">
-            <select class="form-control" name="Month">
-                <option value="">All Month</option>
-                @for (int i = 0; i < month_name.Length; i++)
-                {
-                    <option value="@(i+1)">@month_name[i]</option>
-                }
-            </select>
-        </div>
-        <div class="col-4">
-            <input type="submit" class="form-control" value="Search" />
-        </div>
-    </div>
-</form>
 
 <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-base.min.js"></script>
 
-<div id="chart_container_earn" class="chart"></div>
+<h1>View Sales Report</h1>
+
+@if (curuser.Role.Equals("Admin"))
+{
+    <form method="post">
+        <div class="row mb-5 mt-5">
+            <div class="col-2">
+
+            </div>
+            <div class="col-4">
+                @Html.DropDownList("Year", ViewBag.Year, "Select Year", new { @class = "form-control" })
+            </div>
+            <div class="col-4">
+                <input type="submit" class="form-control" value="Search" />
+            </div>
+            <div class="col-2">
+
+            </div>
+        </div>
+    </form>
+
+    <div id="chart_container_earn_year" class="chart"></div>
+
+    @foreach (var sellername in ViewBag.Seller)
+    {
+        var sellerid = await UserManager.FindByNameAsync(sellername);
+
+
+        <div id="chart_container_earn_@sellername" class="chart"></div>
+        <script>
+        anychart.onDocumentReady(function () {
+
+        //data
+        var data = anychart.data.set([
+
+
+            @for (int i = 0; i < month_name.Length; i++)
+            {
+                double total = 0;
+
+
+                @foreach (var item in Model)
+                {
+                    if (item.HandledBy.Equals(sellerid.Id)
+                            && item.OrderDate.Year.Equals(ViewData["SelectedYear"])
+                                && item.OrderDate.Month.Equals((i+1)) ) //Example: i + 1 == 0 + 1 for January -> OrderDate.Month.Equals(1)
+                    {
+                        total += item.TotalAmount;
+                    }
+                }
+
+
+                //display data
+                <text>{ x: '@month_name[i]', value: @total},</text>
+
+
+            }
+
+
+        ]);
+
+
+
+
+                //create chart
+                var chart = anychart.line();
+
+
+                //create bar series and set data
+                var design = chart.line(data);
+                design.name("Total (RM)");
+                design.labels(false);
+                design.labels().fontColor("#000000");
+
+                //set background
+                chart.background().fill({
+                keys: ["#b0b0b0 0.3", "#b0b0b0 0.4", "#b0b0b0 0.6"],
+                angle: 90
+                });
+
+                //set fill
+                design.normal().fill("#5c5cff", 0.7);
+                design.hovered().fill("#00009e", 0.5);
+                design.selected().fill("#00009e", 0.5);
+                design.normal().stroke("#5c5cff", 0.7);
+                design.hovered().stroke("#5c5cff", 0.7);
+                design.selected().stroke("#5c5cff", 0.7);
+
+
+                // format axis labels
+                var axisLabels_x = chart.xAxis().labels();
+                axisLabels_x.useHtml(true);
+                axisLabels_x.format(
+                    "<a style=\"font-size:20px;color:black;font-family: 'Lucida Console', 'Courier New', monospace;\">{%value}</a>"
+                );
+
+
+                var axisLabels_y = chart.yAxis().labels();
+                axisLabels_y.useHtml(true);
+                axisLabels_y.format(
+                    "<a style=\"font-size:20px;color:black;font-family: 'Lucida Console', 'Courier New', monospace;\">{%value}</a>"
+                );
+
+                //set chart title
+                var title = chart.title();
+                title.enabled(true);
+                title.useHtml(true);
+                title.text(
+                    "<b style='font-size:34px;color:#000024'>@sellername</b><br>" +
+                    "<br><br>"
+                );
+
+                // set the titles of the axis
+                var title_x = chart.xAxis().title();
+                title_x.enabled(true);
+                title_x.useHtml(true);
+                title_x.text(
+                    "<b style='font-size:25px;color:#000024'>Month</b>"
+                );
+
+                var title_y = chart.yAxis().title();
+                title_y.enabled(true);
+                title_y.useHtml(true);
+                title_y.text(
+                    "<b style='font-size:25px;color:#000024'>Total (RM)</b><br>"
+                );
+
+                var labels = chart.xAxis().labels();
+                labels.enabled();
+
+                chart.container("chart_container_earn_@sellername");
+                chart.draw();
+
+            });
+        </script>
+
+
+    }
+
+}
+else // Seller
+{
+    <form method="post">
+        <div class="row mb-5 mt-5">
+            <div class="col-2">
+
+            </div>
+            <div class="col-4">
+                @Html.DropDownList("Year", ViewBag.Year, "Select Year", new { @class = "form-control" })
+            </div>
+            <div class="col-4">
+                <input type="submit" class="form-control" value="Search" />
+            </div>
+            <div class="col-2">
+
+            </div>
+        </div>
+    </form>
+
+    <div id="chart_container_earn_year_seller" class="chart"></div>
+    <div id="chart_container_earn_order_seller" class="chart"></div>
+}
+
+
 <script>
     anychart.onDocumentReady(function () {
 
         //data
         var data = anychart.data.set([
-            ["John", 10000],
-            ["Jake", 12000],
-            ["Peter", 13000],
-            ["James", 10000],
-            ["Mary", 9000],
-            { x: 'Department Stores', value: 737166 },
+            @foreach (var sellername in ViewBag.Seller)
+            {
+                var sellerid = await UserManager.FindByNameAsync(sellername);
+                double total = 0;
+
+                @foreach (var item in Model)
+                {
+                    if (item.HandledBy.Equals(sellerid.Id) && item.OrderDate.Year.Equals(ViewData["SelectedYear"]))
+                    {
+                        total += item.TotalAmount;
+                    }
+                }
+                //display data
+                <text>{ x: '@sellername', value: @total},</text>
+
+            }
+
         ]);
 
 
@@ -112,7 +248,109 @@
         title.useHtml(true);
         title.text(
             "<b style='font-size:34px;color:#000024'>Total Sales Report </b><br>" +
-            "<b style='font-size:28px;color:#000024'>Year</b>" +
+            "<b style='font-size:28px;color:#000024'>@ViewData["SelectedYear"] Year</b>" +
+            "<br><br>"
+        );
+
+        // set the titles of the axis
+        var title_x = chart.xAxis().title();
+        title_x.enabled(true);
+        title_x.useHtml(true);
+        title_x.text(
+            "<b style='font-size:25px;color:#000024'>Seller</b>"
+        );
+
+        var title_y = chart.yAxis().title();
+        title_y.enabled(true);
+        title_y.useHtml(true);
+        title_y.text(
+            "<b style='font-size:25px;color:#000024'>Total (RM)</b><br>"
+        );
+
+        var labels = chart.xAxis().labels();
+        labels.enabled(true);
+
+        chart.container("chart_container_earn_year");
+        chart.draw();
+
+    });
+</script>
+
+
+<script>
+    anychart.onDocumentReady(function () {
+
+        //data
+        var data = anychart.data.set([
+           @for (int i = 0; i < month_name.Length; i++)
+            {
+                double total = 0;
+
+
+                @foreach (var item in Model)
+                {
+                    if (item.HandledBy.Equals(curuser.Id)
+                            && item.OrderDate.Year.Equals(ViewData["SelectedYear"])
+                                && item.OrderDate.Month.Equals((i+1)) ) //Example: i + 1 == 0 + 1 for January -> OrderDate.Month.Equals(1)
+                    {
+                        total += item.TotalAmount;
+                    }
+                }
+                //display data
+                <text>{ x: '@month_name[i]', value: @total},</text>
+            }
+
+        ]);
+
+
+
+
+        //create chart
+        var chart = anychart.column();
+
+
+        //create bar series and set data
+        var design = chart.column(data);
+        design.name("Total (RM)");
+        design.labels(true);
+        design.labels().fontColor("#000000");
+
+        //set background
+        chart.background().fill({
+            keys: ["#b0b0b0 0.3", "#b0b0b0 0.4", "#b0b0b0 0.6"],
+            angle: 90
+        });
+
+        //set fill
+        design.normal().fill("#5c5cff", 0.7);
+        design.hovered().fill("#00009e", 0.5);
+        design.selected().fill("#00009e", 0.5);
+        design.normal().stroke("#5c5cff", 0.7);
+        design.hovered().stroke("#5c5cff", 0.7);
+        design.selected().stroke("#5c5cff", 0.7);
+
+
+        // format axis labels
+        var axisLabels_x = chart.xAxis().labels();
+        axisLabels_x.useHtml(true);
+        axisLabels_x.format(
+            "<a style=\"font-size:20px;color:black;font-family: 'Lucida Console', 'Courier New', monospace;\">{%value}</a>"
+        );
+
+
+        var axisLabels_y = chart.yAxis().labels();
+        axisLabels_y.useHtml(true);
+        axisLabels_y.format(
+            "<a style=\"font-size:20px;color:black;font-family: 'Lucida Console', 'Courier New', monospace;\">{%value}</a>"
+        );
+
+        //set chart title
+        var title = chart.title();
+        title.enabled(true);
+        title.useHtml(true);
+        title.text(
+            "<b style='font-size:34px;color:#000024'>Total Sales Report </b><br>" +
+            "<b style='font-size:28px;color:#000024'>@ViewData["SelectedYear"] Year</b>" +
             "<br><br>"
         );
 
@@ -134,7 +372,108 @@
         var labels = chart.xAxis().labels();
         labels.enabled(true);
 
-        chart.container("chart_container_earn");
+        chart.container("chart_container_earn_year_seller");
+        chart.draw();
+
+    });
+</script>
+
+<script>
+    anychart.onDocumentReady(function () {
+
+        //data
+        var data = anychart.data.set([
+           @for (int i = 0; i < month_name.Length; i++)
+            {
+                double total = 0;
+
+
+                @foreach (var item in Model)
+                {
+                    if (item.HandledBy.Equals(curuser.Id)
+                            && item.OrderDate.Year.Equals(ViewData["SelectedYear"])
+                                && item.OrderDate.Month.Equals((i+1)) ) //Example: i + 1 == 0 + 1 for January -> OrderDate.Month.Equals(1)
+                    {
+                        total++;
+                    }
+                }
+                //display data
+                <text>{ x: '@month_name[i]', value: @total},</text>
+            }
+
+        ]);
+
+
+
+
+        //create chart
+        var chart = anychart.line();
+
+
+        //create bar series and set data
+        var design = chart.line(data);
+        design.name("Total (RM)");
+        design.labels(false);
+        design.labels().fontColor("#000000");
+
+        //set background
+        chart.background().fill({
+            keys: ["#b0b0b0 0.3", "#b0b0b0 0.4", "#b0b0b0 0.6"],
+            angle: 90
+        });
+
+        //set fill
+        design.normal().fill("#5c5cff", 0.7);
+        design.hovered().fill("#00009e", 0.5);
+        design.selected().fill("#00009e", 0.5);
+        design.normal().stroke("#5c5cff", 0.7);
+        design.hovered().stroke("#5c5cff", 0.7);
+        design.selected().stroke("#5c5cff", 0.7);
+
+
+        // format axis labels
+        var axisLabels_x = chart.xAxis().labels();
+        axisLabels_x.useHtml(true);
+        axisLabels_x.format(
+            "<a style=\"font-size:20px;color:black;font-family: 'Lucida Console', 'Courier New', monospace;\">{%value}</a>"
+        );
+
+
+        var axisLabels_y = chart.yAxis().labels();
+        axisLabels_y.useHtml(true);
+        axisLabels_y.format(
+            "<a style=\"font-size:20px;color:black;font-family: 'Lucida Console', 'Courier New', monospace;\">{%value}</a>"
+        );
+
+        //set chart title
+        var title = chart.title();
+        title.enabled(true);
+        title.useHtml(true);
+        title.text(
+            "<b style='font-size:34px;color:#000024'>Total Order Report </b><br>" +
+            "<b style='font-size:28px;color:#000024'>@ViewData["SelectedYear"] Year</b>" +
+            "<br><br>"
+        );
+
+        // set the titles of the axis
+        var title_x = chart.xAxis().title();
+        title_x.enabled(true);
+        title_x.useHtml(true);
+        title_x.text(
+            "<b style='font-size:25px;color:#000024'>Month</b>"
+        );
+
+        var title_y = chart.yAxis().title();
+        title_y.enabled(true);
+        title_y.useHtml(true);
+        title_y.text(
+            "<b style='font-size:25px;color:#000024'>Number of Order</b><br>"
+        );
+
+        var labels = chart.xAxis().labels();
+        labels.enabled(true);
+
+        chart.container("chart_container_earn_order_seller");
         chart.draw();
 
     });
@@ -144,7 +483,7 @@
     .chart {
         width: 100%;
         height: 500px;
-        margin: 0;
+        margin-bottom: 100px;
         padding: 0;
     }
 </style>

@@ -394,7 +394,7 @@ namespace ComeMyFishMarket.Controllers
             var marketorder = from mo in _context.MarketOrder
                               select mo;
 
-            //select HandledBy from MarketOrder OrderBy HandledBy
+            //select UserName(Seller) from AspNetUser
             IQueryable<string> sql_seller = from mo in _context1.Users
                                        where mo.Role == "Seller"
                                        select mo.UserName;
@@ -403,7 +403,7 @@ namespace ComeMyFishMarket.Controllers
 
             //select Year(OrderDate) from MarketOrder OrderBy Year(OrderDate)
             IQueryable<int> sql_year = from mo in _context.MarketOrder
-                                          orderby mo.OrderDate.Year
+                                          orderby mo.OrderDate.Year descending
                                           select mo.OrderDate.Year;
 
 
