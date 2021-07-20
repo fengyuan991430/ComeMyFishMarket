@@ -16,13 +16,13 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductImage)
+            Product Image
         </dt>
         <dd class="col-sm-10">
-            <img src="@splitblob[1]" height="200px" width="200px" />
+            <img src="@splitblob[1]" height="200" width="200" />
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductName)
+            Product Name
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ProductName)
@@ -40,26 +40,20 @@
             @Html.DisplayFor(model => model.Quantity)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
+            @Html.DisplayNameFor(model => model.Price) (RM)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Price)
+            RM @Html.DisplayFor(model => model.Price)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductStatus)
+            Product Status
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ProductStatus)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UserID)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UserID)
         </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.ProductID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="SellerProduct">Back to List</a>
 </div>

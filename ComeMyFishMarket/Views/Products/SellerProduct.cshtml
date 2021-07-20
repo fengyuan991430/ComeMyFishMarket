@@ -9,23 +9,37 @@
 
 <h1>Product List</h1>
 
-<p>
+<p class="mt-3">
     <a asp-action="Create">Add New Product</a>
 </p>
 <form>
-    Search Product: <input type="text" name="ProductName" /> &nbsp;&nbsp;&nbsp;
-    Filter By Category: @Html.DropDownList("Category", "All") &nbsp;&nbsp;&nbsp;
-    <input type="submit" name="search" value="Search Product" />
+    <div class="row mb-2">
+        <div class="col-2">
+            <label>Search Product:</label>
+        </div>
+        <div class="col-3">
+            <input type="text" name="ProductName" class="form-control"/>
+        </div>
+        <div class="col-2">
+            <label>Filter By Category:</label>
+        </div>
+        <div class="col-3">
+            @Html.DropDownList("Category", ViewBag.Category, "All Category", new { @class = "form-control"})
+        </div>
+        <div class="col-2">
+            <input type="submit" name="search" value="Search Product" class="form-control btn btn-primary"/>
+        </div>
+    </div>  
 </form>
 <br />
-<table class="table">
-    <thead>
+<table class="table table-hover">
+    <thead class="table-light">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProductImage)
+                Product Image
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductName)
+                Product Name
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Category)
@@ -34,12 +48,14 @@
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                RM @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.Price) (RM)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductStatus)
+                Product Status
             </th>
-            <th></th>
+            <th>
+                Action
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -52,7 +68,7 @@
                 string[] splitblob = bloblist[0].Split("#");
                 <tr>
                     <td>
-                        <img src="@splitblob[1]" width="200px" height="200px" />
+                        <img src="@splitblob[1]" width="200" height="200" />
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ProductName)
@@ -64,15 +80,15 @@
                         @Html.DisplayFor(modelItem => item.Quantity)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Price)
+                        RM @Html.DisplayFor(modelItem => item.Price)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ProductStatus)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.ProductID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ProductID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ProductID">Delete</a>
+                        <a class="ml-2 mr-2" asp-action="Edit" asp-route-id="@item.ProductID">Edit</a> |
+                        <a class="ml-2 mr-2" asp-action="Details" asp-route-id="@item.ProductID">Details</a> |
+                        <a class="ml-2 mr-2" asp-action="Delete" asp-route-id="@item.ProductID">Delete</a>
                     </td>
                 </tr>
             }
