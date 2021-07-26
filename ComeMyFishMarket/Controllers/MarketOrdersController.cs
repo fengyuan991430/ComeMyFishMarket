@@ -396,7 +396,7 @@ namespace ComeMyFishMarket.Controllers
 
             //select UserName(Seller) from AspNetUser
             IQueryable<string> sql_seller = from mo in _context1.Users
-                                       where mo.Role == "Seller"
+                                       where mo.Role != "Customer"
                                        select mo.UserName;
 
             ViewBag.Seller = sql_seller.Distinct().ToList();
