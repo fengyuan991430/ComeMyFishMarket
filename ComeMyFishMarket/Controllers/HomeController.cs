@@ -10,6 +10,8 @@ using ComeMyFishMarket.Data;
 using Microsoft.AspNetCore.Identity;
 using ComeMyFishMarket.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.WindowsAzure.Storage.Blob;
+using System.IO;
 
 namespace ComeMyFishMarket.Controllers
 {
@@ -21,17 +23,14 @@ namespace ComeMyFishMarket.Controllers
 
         private readonly UserManager<ComeMyFishMarketUser> _userManager;
 
-        private readonly SignInManager<ComeMyFishMarketUser> _signInManager;
-
         private readonly ComeMyFishMarketContext _context1;
 
-        public HomeController(ILogger<HomeController> logger, ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> userManager, ComeMyFishMarketContext context1, SignInManager<ComeMyFishMarketUser> signInManager)
+        public HomeController(ILogger<HomeController> logger, ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> userManager, ComeMyFishMarketContext context1)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
             _context1 = context1;
-            _signInManager = signInManager;
         }
 
         public IActionResult Index(string keyword)
@@ -53,19 +52,12 @@ namespace ComeMyFishMarket.Controllers
         public IActionResult AddCart(int id)
         {
             var user = _context1.Users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
-            
-            if(_signInManager.IsSignedIn(User))
+
+            if (user.Role != "Customer")
             {
-                if(user.Role != "Customer")
-                {
-                    TempData["Validate"] = "Only Customer Can Add To Cart!";
-                    return RedirectToAction("Index","Home");
-                }
+                TempData["Validate"] = "Only Customer Can Add To Cart!";
+                return RedirectToAction("Index", "Home");
             }
-            else
-            {
-                return LocalRedirect("/Identity/Account/Login");
-            }            
 
             Product p = _context.Product.FirstOrDefault(x => x.ProductID == id);
             if (p != null && p.Quantity > 0)
@@ -90,6 +82,7 @@ namespace ComeMyFishMarket.Controllers
                 _context.SaveChanges();
             }
 
+            TempData["Add"] = "1 Unit " + p.ProductName +" Product Successfully Added To Cart!";
             return RedirectToAction("Index");
         }
 
@@ -108,6 +101,8 @@ namespace ComeMyFishMarket.Controllers
                 }
                 _context.SaveChanges();
             }
+
+            TempData["Remove"] = "1 Unit " + cartitem.ProductName + " Product Successfully Removed From Cart!";
             return RedirectToAction("Index");
         }
 
@@ -134,6 +129,28 @@ namespace ComeMyFishMarket.Controllers
             _context.SaveChanges();
             return RedirectToAction("TopUp");
         }
+
+        public IActionResult DownloadImage(string id)
+        {
+            BlobManager b = new BlobManager();
+            CloudBlobContainer container = b.Container();
+            CloudBlockBlob blob = container.GetBlockBlobReference(id);
+            Stream blobStream = blob.OpenReadAsync().Result;
+            return File(blobStream, blob.Properties.ContentType, blob.Name);
+        }
+
+        public IActionResult SellerList(string SellerName)
+        {
+            var result = from m in _context1.Users select m;
+
+            if (!string.IsNullOrEmpty(SellerName))
+            {
+                result = result.Where(s => s.UserName.Contains(SellerName));
+            }
+          
+            return View( result.Where(x => x.Role == "Admin" || x.Role == "Seller").ToList());
+        }
+
 
         public IActionResult Privacy()
         {

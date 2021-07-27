@@ -18,10 +18,12 @@ namespace ComeMyFishMarket.Controllers
     {
         private readonly ComeMyFishMarketClassContext _context;
         private readonly UserManager<ComeMyFishMarketUser> _userManager;
-        public ProductsController(ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> UserManager)
+        private readonly ComeMyFishMarketContext _context1;
+        public ProductsController(ComeMyFishMarketClassContext context, UserManager<ComeMyFishMarketUser> UserManager, ComeMyFishMarketContext context1)
         {
             _context = context;
             _userManager = UserManager;
+            _context1 = context1;
         }
 
         // GET: Products
@@ -68,23 +70,9 @@ namespace ComeMyFishMarket.Controllers
             return View(await product.ToListAsync());
         }
 
-        public async Task<IActionResult> CustomerProduct(String userid, String ProductName, String Category)
+        public IActionResult CustomerProduct(string id)
         {
-            var product = from m in _context.Product select m;
-            if (!String.IsNullOrEmpty(ProductName))
-            {
-                product = product.Where(s => s.ProductName.Contains(ProductName));
-            }
-            //Add Item into drop down list
-            IQueryable<string> TypeQuery = from m in _context.Product orderby m.Category select m.Category;
-            IEnumerable<SelectListItem> items = new SelectList(await TypeQuery.Distinct().ToListAsync());
-            ViewBag.Category = items;
-
-            if (!String.IsNullOrEmpty(Category))
-            {
-                product = product.Where(s => s.Category.Contains(Category));
-            }
-            return View(await _context.Product.ToListAsync());
+            return View( _context.Product.Where(x=>x.UserID == id).ToList());
         }
 
         // GET: Products/Details/5
@@ -272,6 +260,41 @@ namespace ComeMyFishMarket.Controllers
         private bool ProductExists(int id)
         {
             return _context.Product.Any(e => e.ProductID == id);
+        }
+
+        public IActionResult AddCart(int id)
+        {
+            var user = _context1.Users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
+
+            Product p = _context.Product.FirstOrDefault(x => x.ProductID == id);
+            if (p != null && p.Quantity > 0)
+            {
+                ShoppingCart cart = _context.ShoppingCart.FirstOrDefault(x => x.ProductId == id && x.CustomerId == user.Id);
+                if (cart != null)
+                {
+                    cart.Quantity++;
+                }
+                else
+                {
+                    ShoppingCart cart1 = new ShoppingCart();
+                    cart1.ProductId = p.ProductID;
+                    cart1.ProductName = p.ProductName;
+                    cart1.Quantity = 1;
+                    cart1.Price = p.Price;
+                    cart1.ProductImage = p.ProductImage;
+                    cart1.CustomerId = _userManager.GetUserId(User);
+                    cart1.SellerId = p.UserID;
+                    _context.ShoppingCart.Add(cart1);
+                }
+                _context.SaveChanges();
+                TempData["Add"] = "1 Unit " + p.ProductName + " Product Successfully Added To Cart!";
+            }
+            else
+            {
+                TempData["Error"] = "Sorry, This Product Currently Out Of Stock!";
+            }
+        
+            return RedirectToAction("CustomerProduct", new { id = p.UserID} );
         }
     }
 }

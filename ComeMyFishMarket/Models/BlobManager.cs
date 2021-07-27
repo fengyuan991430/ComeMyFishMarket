@@ -81,5 +81,11 @@ namespace ComeMyFishMarket.Models
 
             return bloblist;
         }
+
+        public CloudBlobContainer Container()
+        {
+            CloudBlobContainer container = this.getBlobContainerInformation();
+            return container;
+        }
     }
 }

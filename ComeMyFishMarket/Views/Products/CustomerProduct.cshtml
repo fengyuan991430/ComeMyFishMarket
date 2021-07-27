@@ -3,10 +3,35 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    if (TempData["Add"] != null)
+    {
+        ViewBag.Message = TempData["Add"].ToString();
+        <script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+        </script>
+        //TempData["Validate"] = null;
+    }
+
+    if (TempData["Error"] != null)
+    {
+        ViewBag.Message = TempData["Error"].ToString();
+        <script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+        </script>
+        //TempData["Validate"] = null;
+    }
 }
 
 <h1>Product List</h1>
 <h1></h1>
+<h4>
+    <a asp-action="Sellerlist" asp-controller="Home">Back To List</a>
+</h4>
 <br />
 <table class="table">
     <thead>
@@ -30,7 +55,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            
+
             BlobManager bm = new BlobManager();
             List<string> bloblist = bm.ViewBlobImage(item.ProductImage);
             string[] splitblob = bloblist[0].Split("#");
@@ -51,7 +76,7 @@
                     RM @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
-                   <a asp-action="AddCart" asp-controller="Home" asp-route-id="@item.ProductID">Add To Cart</a>
+                    <a asp-action="AddCart" asp-controller="Products" asp-route-id="@item.ProductID">Add To Cart</a>
                 </td>
             </tr>
         }

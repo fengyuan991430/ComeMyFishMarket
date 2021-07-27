@@ -1,0 +1,91 @@
+﻿@model IEnumerable<ComeMyFishMarket.Areas.Identity.Data.ComeMyFishMarketUser>
+@using ComeMyFishMarket.Data;
+@inject ComeMyFishMarketClassContext _context
+@{
+    ViewData["Title"] = "SellerList";
+}
+
+<h1 style="margin-bottom:15px; font-family:cursive">Seller List </h1>
+<h1></h1>
+<form>
+    <div class="input-group col-5 mx-auto">
+        <input class="form-control" placeholder="Search Seller Name" name="SellerName" />
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Search Seller</button>
+        </div>
+    </div>
+</form>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Username
+            </th>
+            <th>
+                Selling Product
+            </th>
+            <th>
+                Rating
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @{
+                        var list = _context.Product.Where(x => x.UserID == item.Id).Select(x => x.ProductName).ToList();
+                        if(list.Count == 0)
+                        {
+                            <p>None</p>
+                        }
+                        else
+                        {
+                            string pro = string.Join(",", list);
+                            string[] arr = pro.Split(",");
+                            int a = 1;
+                            for (int i = 0; i < arr.Length; i++)
+                            {
+                                <p style="margin-bottom:8px;">@a. @arr[i]</p>
+                                a++;
+                            }
+                        }
+                    }
+                </td>
+                <td>
+                    @{
+                        var rat1 = _context.MarketOrder.Where(x => x.HandledBy == item.Id && x.GetFeedback == "Like").Count();
+                        var rat2 = _context.MarketOrder.Where(x => x.HandledBy == item.Id && x.GetFeedback == "Dislike").Count();
+                        <i class="fas fa-thumbs-up pr-3" style="font-size: 25px">
+                             @rat1
+                        </i>
+                        <i class="fas fa-thumbs-down" style="font-size: 25px">
+                            @rat2
+                        </i>                       
+                    }
+                </td>
+                <td>
+                    <a asp-action="CustomerProduct" asp-controller="Products" asp-route-id="@item.Id">View Selling Product</a>
+                </td>
+                <td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+

@@ -11,6 +11,32 @@
         </script>
         //TempData["Validate"] = null;
     }
+
+    if (TempData["Add"] != null)
+    {
+        ViewBag.Message = TempData["Add"].ToString();
+        <script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+        </script>
+        //TempData["Validate"] = null;
+    }
+
+    if (TempData["Remove"] != null)
+    {
+        ViewBag.Message = TempData["Remove"].ToString();
+        <script type="text/javascript">
+        window.onload = function () {
+            this.alert("@ViewBag.Message");
+        };
+        </script>
+        //TempData["Validate"] = null;
+    }
+
+    BlobManager b = new BlobManager();
+    List<string> list;
+    string[] split;
 }
 
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000">
@@ -20,24 +46,36 @@
         <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
     </ol>
     <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img class="d-block w-100" src="~/lib/images/background1.jpg" alt="First slide" height="485" style="filter: brightness(70%);">
-            <div class="carousel-caption">
-                <h1> come my fish market</h1>
+        @{
+            list = b.ViewBlobImage("slider1background1.jpg");
+            split = list[0].Split("#");
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="@split[1]" alt="First slide" height="485" style="filter: brightness(70%);">
+                <div class="carousel-caption">
+                    <h1> come my fish market</h1>
+                </div>
             </div>
-        </div>
-        <div class="carousel-item">
-            <img class="d-block w-100" src="~/lib/images/background2.jpg" alt="Second slide" height="485" style="filter: brightness(70%);">
-            <div class="carousel-caption">
-                <h1>come my fish market</h1>
+        }
+        @{
+            list = b.ViewBlobImage("slider2background2.jpg");
+            split = list[0].Split("#");
+            <div class="carousel-item">
+                <img class="d-block w-100" src="@split[1]" alt="Second slide" height="485" style="filter: brightness(70%);">
+                <div class="carousel-caption">
+                    <h1>come my fish market</h1>
+                </div>
             </div>
-        </div>
-        <div class="carousel-item">
-            <img class="d-block w-100" src="~/lib/images/background.jpeg" alt="Third slide" height="485" style="filter: brightness(70%);">
-            <div class="carousel-caption">
-                <h1>come my fish market</h1>
+        }
+        @{
+            list = b.ViewBlobImage("slider3background.jpeg");
+            split = list[0].Split("#");
+            <div class="carousel-item">
+                <img class="d-block w-100" src="@split[1]" alt="Third slide" height="485" style="filter: brightness(70%);">
+                <div class="carousel-caption">
+                    <h1>come my fish market</h1>
+                </div>
             </div>
-        </div>
+        }
     </div>
     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
         <span class="fa fa-chevron-left" aria-hidden="true"></span>
@@ -92,7 +130,7 @@
         <a class="box" style="padding-right: 10px;position:relative">
             <i class="fa fa-shopping-cart fa-2x" style="float:right;"></i>
             <table>
-                <tr class="text-center"><td colspan="2">No Product Yet</td></tr>
+                <tr class="text-center"><td colspan="2">Empty Shopping Cart</td></tr>
             </table>
         </a>
     }
@@ -111,7 +149,10 @@
                 <p>RM @Html.DisplayFor(modelItem => product.Price)</p>
                 <div class="form-group-lg" style="display:flex;justify-content:space-between">
                     <p class="my-auto">Quantity: @Html.DisplayFor(modelItem => product.Quantity)</p>
-                    <a asp-action="AddCart" asp-route-id="@product.ProductID" class="btn btn-sm btn-success" style="display:flex;"><i class="fa fa-cart-plus" style="font-size:15px; color:white" title="Add to Cart"></i></a>
+                    <p class="my-auto">
+                        <a asp-action="DownloadImage" asp-route-id="@product.ProductImage" class="btn btn-sm btn-success mr-2" style="display:flex;"><i class="fa fa-download" style="font-size:15px; color:white" title="Download Image"></i></a>
+                        <a asp-action="AddCart" asp-route-id="@product.ProductID" class="btn btn-sm btn-success" style="display:flex;"><i class="fa fa-cart-plus" style="font-size:15px; color:white" title="Add to Cart"></i></a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -204,11 +245,9 @@
         border: 1px black solid;
     }
 
-        .box table tr {
-            transition: .3s;
-            -webkit-transition: .3s;
-            padding: 20px
-        }
+    .fa-trash:hover {
+        color: red !important;
+    }
 </style>
 
 

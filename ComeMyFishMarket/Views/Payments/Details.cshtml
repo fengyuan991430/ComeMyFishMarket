@@ -37,7 +37,15 @@
             Pay To:
         </dt>
         <dd class="col-sm-10">
-            @receiver.Username
+            @if (receiver != null)
+            {
+                @receiver.Username
+            }
+            else
+            {
+                var admin = "Admin";
+                @admin
+            }
         </dd>
     </dl>
 </div>
