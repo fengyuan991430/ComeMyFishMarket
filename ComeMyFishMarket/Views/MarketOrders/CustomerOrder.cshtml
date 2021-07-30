@@ -118,7 +118,7 @@
 
 
                         <a class="ml-2 pr-3" asp-action="Index" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
-                        @if (item.OrderStatus.Equals("Completed"))
+                        @if (item.OrderStatus.Equals("Unpaid"))
                         {
                             <a class="pl-3" asp-action="OrderPayment" asp-controller="MarketOrders" asp-route-id="@item.MarketOrderID">Proceed to Payment</a>
                         }
