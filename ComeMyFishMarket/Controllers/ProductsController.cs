@@ -72,7 +72,7 @@ namespace ComeMyFishMarket.Controllers
 
         public IActionResult CustomerProduct(string id)
         {
-            return View( _context.Product.Where(x=>x.UserID == id).ToList());
+            return View( _context.Product.Where(x=>x.UserID == id && x.ProductStatus == "Active").ToList());
         }
 
         // GET: Products/Details/5
@@ -240,7 +240,7 @@ namespace ComeMyFishMarket.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)    
         {
             var curuser = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
             var product = await _context.Product.FindAsync(id);
