@@ -213,9 +213,9 @@
                             }
 
                             <a class="ml-2 pr-3" asp-action="ItemData" asp-controller="OrderItems" asp-route-orderid="@item.MarketOrderID">View Order Item</a> |
-                            @if (item.OrderStatus.Equals("Unpaid"))
+                            @if (item.OrderStatus.Equals("Completed"))
                             {
-                                <a class="pl-3" >Proceed to Payment</a>
+                                <a class="pl-3">No Payment Data</a>
                             }
                             else
                             {
