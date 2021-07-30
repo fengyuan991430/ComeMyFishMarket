@@ -1,16 +1,12 @@
 {
   "dependencies": {
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "ComeMyFishMarketContextConnection"
-    },
     "mssql2": {
       "type": "mssql",
       "connectionId": "ComeMyFishMarketClassContext"
     },
-    "storage1": {
-      "type": "storage",
-      "connectionId": "blobstorageconnectortp046268"
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ComeMyFishMarketContextConnection"
     }
   }
 }

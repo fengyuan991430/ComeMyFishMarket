@@ -248,7 +248,7 @@ namespace ComeMyFishMarket.Controllers
             await _context.SaveChangesAsync();
             if (curuser.Role.Equals("Admin"))
             {
-                return RedirectToAction(nameof(this.AdminProduct));
+                return RedirectToAction(nameof(this.SellerProduct));
             }
             if (curuser.Role.Equals("Seller"))
             {
